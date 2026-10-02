@@ -1,7 +1,14 @@
 ---
 import { Image } from "astro:assets";
 import logo from "../assets/logo.png";
+import { isPast } from "../lib/dates.js";
 import { SITE } from "../lib/site.js";
+
+// The event with its own button in the menu. It is set in src/lib/site.js
+// and drops out once its date has passed.
+const highlight = SITE.highlight && !isPast(SITE.highlight.date) ? SITE.highlight : null;
+const trim = (path) => path.replace(/\/$/, "");
+const onHighlight = highlight && trim(Astro.url.pathname) === trim(highlight.href);
 
 const links = [
   { href: "/#about", label: "About" },
@@ -12,7 +19,7 @@ const links = [
 ];
 ---
 
-<header class="site-header">
+<header class:list={["site-header", { "has-highlight": highlight }]}>
   <div class="container nav">
     <a href="/" class="brand">
       <Image class="brand-logo" src={logo} alt="" width={48} densities={[1, 2, 3]} loading="eager" />
@@ -22,9 +29,20 @@ const links = [
       </span>
     </a>
 
-    <!-- Wide screens: links in a row -->
+    <!-- Wide screens: links in a row. On tablets only the event button stays in the bar. -->
     <nav class="desktop-nav" aria-label="Main">
       {links.map((link) => <a href={link.href}>{link.label}</a>)}
+      {highlight && (
+        <a
+          class="highlight"
+          href={highlight.href}
+          aria-current={onHighlight ? "page" : undefined}
+          data-event-date={highlight.date}
+          data-hide-when-past
+        >
+          <span class="hex" aria-hidden="true"></span>{highlight.label}
+        </a>
+      )}
       <a class="meetup" href={SITE.meetup} target="_blank" rel="noopener noreferrer">Join Meetup</a>
     </nav>
 
@@ -32,6 +50,17 @@ const links = [
     <details class="mobile-nav">
       <summary>Menu</summary>
       <nav aria-label="Main">
+        {highlight && (
+          <a
+            class="highlight"
+            href={highlight.href}
+            aria-current={onHighlight ? "page" : undefined}
+            data-event-date={highlight.date}
+            data-hide-when-past
+          >
+            <span class="hex" aria-hidden="true"></span>{highlight.label}
+          </a>
+        )}
         {links.map((link) => <a href={link.href}>{link.label}</a>)}
         <a class="meetup" href={SITE.meetup} target="_blank" rel="noopener noreferrer">Join Meetup</a>
       </nav>
@@ -92,14 +121,47 @@ const links = [
   gap: 26px;
   align-items: center;
   font-size: .92rem;
+  margin-left: auto;
 }
 
-.desktop-nav a:not(.meetup) {
+.desktop-nav a:not(.meetup, .highlight) {
   color: #d4d4d8;
 }
 
-.desktop-nav a:not(.meetup):hover {
+.desktop-nav a:not(.meetup, .highlight):hover {
   color: #fff;
+}
+
+/* The event button: an outline in the logo's orange and purple, with a small hexagon like the badge */
+.highlight {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 8.5px 15px;
+  border: 1.5px solid transparent;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 800;
+  white-space: nowrap;
+  background:
+    linear-gradient(#111118, #111118) padding-box,
+    linear-gradient(100deg, var(--orange), var(--purple)) border-box;
+}
+
+.highlight:hover {
+  background:
+    linear-gradient(100deg, rgba(255,153,0,.2), rgba(168,85,247,.26)) padding-box,
+    linear-gradient(#111118, #111118) padding-box,
+    linear-gradient(100deg, var(--orange), var(--purple)) border-box;
+}
+
+.hex {
+  width: 10px;
+  height: 11px;
+  flex-shrink: 0;
+  background: var(--orange);
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
 }
 
 .meetup {
@@ -144,7 +206,7 @@ const links = [
   border-bottom: 1px solid var(--border);
 }
 
-.mobile-nav nav a:not(.meetup) {
+.mobile-nav nav a:not(.meetup, .highlight) {
   padding: 13px 6px;
   font-size: 1.05rem;
   color: #e4e4e7;
@@ -157,8 +219,15 @@ const links = [
   text-align: center;
 }
 
+.mobile-nav .highlight {
+  margin: 4px 0 8px;
+  padding: 12px 16px;
+  font-size: 1.05rem;
+}
+
+/* Small screens: the links move behind the Menu button */
 @media (max-width: 760px) {
-  .desktop-nav {
+  .desktop-nav a:not(.highlight) {
     display: none;
   }
 
@@ -168,6 +237,30 @@ const links = [
 
   .brand-logo {
     width: 42px;
+  }
+}
+
+/* The event button takes room in the bar, so the Menu button takes over sooner while it is shown */
+@media (max-width: 1000px) {
+  .has-highlight .desktop-nav a:not(.highlight) {
+    display: none;
+  }
+
+  .has-highlight .mobile-nav {
+    display: block;
+  }
+}
+
+/* Tablets show the event button in the bar, phones show it at the top of the menu */
+@media (min-width: 521px) {
+  .mobile-nav .highlight {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .desktop-nav .highlight {
+    display: none;
   }
 }
 </style>

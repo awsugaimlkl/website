@@ -1,7 +1,8 @@
 ---
 import { Image } from "astro:assets";
 
-const { name, role, talk, linkedin, photo } = Astro.props;
+// placeholder: an empty profile for a speaker who has not been announced yet.
+const { name = "", role, talk, linkedin, photo, placeholder = false } = Astro.props;
 
 // Use the photo in src/assets/speakers if there is one, otherwise show initials.
 const files = import.meta.glob("/src/assets/speakers/*.{jpg,jpeg,png,webp}", { eager: true });
@@ -24,6 +25,20 @@ const maxWidth = image ? Math.min(360, image.width) : 0;
 const widths = [...new Set([120, 240, maxWidth].filter((w) => w <= maxWidth))];
 ---
 
+{placeholder ? (
+  <div class="speaker empty" aria-hidden="true">
+    <span class="portrait blank">
+      <svg viewBox="0 0 24 24" width="44" height="44" fill="currentColor">
+        <circle cx="12" cy="8.2" r="4.2" />
+        <path d="M3.6 21c.5-4.6 4-7.2 8.4-7.2s7.9 2.6 8.4 7.2z" />
+      </svg>
+    </span>
+    <div>
+      <p class="name">Speaker to be announced</p>
+      <p class="role">Talk title coming soon</p>
+    </div>
+  </div>
+) : (
 <article class="speaker">
   {image ? (
     <Image
@@ -48,6 +63,7 @@ const widths = [...new Set([120, 240, maxWidth].filter((w) => w <= maxWidth))];
     )}
   </div>
 </article>
+)}
 
 <style>
 .speaker {
@@ -79,10 +95,62 @@ const widths = [...new Set([120, 240, maxWidth].filter((w) => w <= maxWidth))];
   background: linear-gradient(145deg, #3b0764, #18181f 75%);
 }
 
-h3 {
+h3,
+.name {
   font-size: 1.25rem;
+  font-weight: 700;
   line-height: 1.25;
   margin: 4px 0 4px;
+}
+
+/* An empty profile: dashed outline and quieter text */
+.blank {
+  display: grid;
+  place-items: center;
+  border: 2px dashed #4a4a58;
+  background: rgba(255,255,255,.03);
+  color: #52525e;
+}
+
+.empty {
+  align-items: center;
+}
+
+.empty .name {
+  color: #d4d4d8;
+}
+
+.empty .role {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.blank svg {
+  width: 46%;
+  height: 46%;
+}
+
+/* On phones the empty profiles shrink to one short line each, so they do not fill the screen */
+@media (max-width: 760px) {
+  .empty {
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 14px;
+    padding: 14px 0;
+  }
+
+  .empty .portrait {
+    width: 56px;
+    height: 56px;
+  }
+
+  .empty .name {
+    font-size: 1.05rem;
+    margin: 0 0 2px;
+  }
+
+  .empty .role {
+    font-size: .9rem;
+  }
 }
 
 .role {

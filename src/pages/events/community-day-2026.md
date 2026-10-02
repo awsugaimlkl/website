@@ -44,7 +44,11 @@ highlights:
   - title: "People to meet"
     text: "Time with speakers, community leaders and fellow AI/ML practitioners."
 
-# Speakers. Remove the # signs and add one entry per speaker.
+# Speakers. speakerSlots is how many profiles the page shows. Slots without a speaker
+# yet are shown as "Speaker to be announced". Set it to 0 to show only confirmed speakers.
+speakerSlots: 6
+
+# Remove the # signs and add one entry per speaker.
 # photo is a file name in src/assets/speakers without the extension; leave it out to show initials.
 # speakers:
 #   - name: "Full name"
@@ -53,13 +57,30 @@ highlights:
 #     linkedin: "https://www.linkedin.com/in/..."
 #     photo: "full-name"
 
-# Schedule. Remove the # signs and add one entry per slot, in order.
-# agenda:
-#   - time: "9:00 AM"
-#     title: "Registration"
-#   - time: "10:00 AM"
+# Schedule. One entry per slot, in order. This is a placeholder outline: replace it with
+# the real slots when the agenda is set, and remove agendaNote at the same time.
+# An entry with "placeholder: true" is marked "To be announced" on the page.
+# A confirmed talk looks like this:
+#   - time: "10:00 AM – 10:40 AM"
 #     title: "Talk title"
 #     speaker: "Speaker name"
+agendaNote: "This is an outline. Session times and talks will be confirmed once speakers are announced."
+agenda:
+  - time: "9:00 AM"
+    title: "Registration"
+  - time: "Morning"
+    title: "Opening session"
+    placeholder: true
+  - time: "Morning"
+    title: "Talks"
+    placeholder: true
+  - time: "Midday"
+    title: "Lunch break"
+  - time: "Afternoon"
+    title: "Talks"
+    placeholder: true
+  - time: "5:00 PM"
+    title: "Close"
 
 # Sponsors and partners. Entries with the same tier are grouped under one heading.
 # logo is a file name in src/assets/sponsors without the extension; leave it out to show the name.

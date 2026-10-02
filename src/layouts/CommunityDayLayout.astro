@@ -34,7 +34,9 @@ const {
   highlights = [],
   topics = [],
   speakers = [],
+  speakerSlots = 0,
   agenda = [],
+  agendaNote,
   sponsors = [],
   photo,
   photoAlt = "",
@@ -44,6 +46,9 @@ const {
 const past = isPast(date);
 const pageUrl = new URL(Astro.url.pathname, Astro.site);
 const eventData = eventStructuredData(frontmatter, pageUrl, Astro.site);
+
+// Empty profiles shown until every speaker slot has a name in it.
+const openSlots = past ? 0 : Math.max(0, speakerSlots - speakers.length);
 
 // The moment the countdown runs to, in Malaysia time.
 const startsAt = startTime ? `${date}T${startTime}:00+08:00` : null;
@@ -187,12 +192,19 @@ const sections = [
       <div class="container">
         <h2 id="speakers-heading">Speakers</h2>
         <div class="body">
-          {speakers.length > 0 ? (
+          {speakers.length === 0 && (
+            <p class="note">Speakers will be announced here as their talks are confirmed.</p>
+          )}
+
+          {(speakers.length > 0 || openSlots > 0) && (
             <div class="speaker-grid">
               {speakers.map((speaker) => <Speaker {...speaker} />)}
+              {Array.from({ length: openSlots }, () => <Speaker placeholder />)}
             </div>
-          ) : (
-            <p class="note">Speakers will be listed here as their talks are confirmed.</p>
+          )}
+
+          {speakers.length > 0 && openSlots > 0 && (
+            <p class="note">More speakers will be announced as their talks are confirmed.</p>
           )}
 
           {callForSpeakersUrl && !past && (
@@ -225,13 +237,16 @@ const sections = [
         <div class="body">
           <p class="fact">{dateDisplay}<br />{time}, Malaysia time</p>
 
+          {agendaNote && <p class="note">{agendaNote}</p>}
+
           {agenda.length > 0 ? (
             <ol class="agenda">
               {agenda.map((item) => (
-                <li>
+                <li class:list={{ open: item.placeholder }}>
                   <span class="slot">{item.time}</span>
                   <div>
                     <strong>{item.title}</strong>
+                    {item.placeholder && <span class="tag">To be announced</span>}
                     {item.speaker && <span class="by">{item.speaker}</span>}
                   </div>
                 </li>
@@ -608,6 +623,14 @@ const sections = [
   gap: 0 40px;
 }
 
+.note + .speaker-grid {
+  margin-top: 22px;
+}
+
+.speaker-grid + .note {
+  margin-top: 18px;
+}
+
 .call {
   margin-top: 30px;
   padding: 34px;
@@ -656,6 +679,7 @@ const sections = [
 .agenda li {
   display: grid;
   grid-template-columns: 190px minmax(0, 1fr);
+  align-items: baseline;
   gap: 20px;
   padding: 16px 0;
   border-top: 1px solid var(--border);
@@ -671,9 +695,11 @@ const sections = [
   font-variant-numeric: tabular-nums;
 }
 
-.agenda strong,
-.agenda .by {
-  display: block;
+.agenda li > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
 }
 
 .agenda strong {
@@ -681,8 +707,18 @@ const sections = [
 }
 
 .agenda .by {
-  margin-top: 4px;
+  flex-basis: 100%;
   color: #c4b5fd;
+}
+
+/* A slot that is still to be filled: quieter, so confirmed slots stand out */
+.agenda .open .slot {
+  color: #c4b5fd;
+}
+
+.agenda .open strong {
+  color: #d4d4d8;
+  font-weight: 600;
 }
 
 /* ---------- Sponsors ---------- */

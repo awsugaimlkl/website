@@ -10,4 +10,12 @@ export const SITE = {
   facebook: "https://www.facebook.com/share/g/1JWLK8ykeb/?mibextid=wwXIfr",
   // Google Analytics measurement ID. Set to "" to switch tracking off.
   googleAnalyticsId: "G-NY3PKDFBWZ",
+  // The event that gets its own button in the menu at the top of every page.
+  // The button disappears by itself once the date has passed.
+  // Replace with `highlight: null,` to remove it sooner.
+  highlight: {
+    label: "Community Day 2026",
+    href: "/events/community-day-2026/",
+    date: "2026-11-14",
+  },
 };

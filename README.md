@@ -24,7 +24,7 @@ src/pages/events/*.md            One file per event
 src/layouts/EventLayout.astro    How a meetup page looks
 src/layouts/CommunityDayLayout.astro  How the Community Day page looks
 src/components/                  Header, footer, event card, team member, speaker
-src/lib/site.js                  Group name, the Meetup, LinkedIn, Facebook links and the Google Analytics ID
+src/lib/site.js                  Group name, the Meetup, LinkedIn, Facebook links, the Google Analytics ID and the event button in the menu
 src/lib/team.js                  The organizing team shown on the home page
 src/assets/logo.png              The logo. Astro resizes it where it is used
 src/assets/photos/               Event photos. Astro resizes and compresses them
@@ -79,7 +79,8 @@ Everything on the page comes from the top of `src/pages/events/community-day-202
 
 - **Call for speakers.** `callForSpeakersUrl` is the application form. While the line is there, the page shows "Apply to speak" buttons. Put a `#` in front of it when the call closes.
 - **Speakers.** Add an entry under `speakers` with `name`, `role`, `talk`, `linkedin` and `photo`. Photos go in `src/assets/speakers/`. A speaker without a photo is shown with their initials.
-- **Schedule.** Add an entry under `agenda` for each slot with `time`, `title` and, for a talk, `speaker`.
+- **Speaker placeholders.** `speakerSlots` is how many profiles the page shows. Slots without a speaker yet are shown as "Speaker to be announced", and each speaker you add takes one over. Set it to `0` to show only confirmed speakers.
+- **Schedule.** `agenda` has one entry per slot with `time`, `title` and, for a talk, `speaker`. It starts as a placeholder outline: an entry with `placeholder: true` is marked "To be announced". Replace the outline with the real slots when the agenda is set, and remove `agendaNote`, the line that tells visitors it is an outline.
 - **Registration.** Add `registrationUrl` and a Register button appears at the top of the page and in the Registration section.
 - **Sponsors and partners.** Add an entry under `sponsors` with `name`, `tier`, `url` and `logo`. Entries with the same `tier` are grouped under one heading. Logos go in `src/assets/sponsors/`.
 - **Countdown.** It runs to `startTime` on `date`, in Malaysia time, and disappears once the event starts.
@@ -88,6 +89,12 @@ Everything on the page comes from the top of `src/pages/events/community-day-202
 The organizing team on the page is the same list as the home page, from `src/lib/team.js`. If the date or time changes, update `public/community-day-2026.ics` as well, which is the file behind the "Add to calendar" button.
 
 To use the same page for a later event, copy the file and keep `layout: ../../layouts/CommunityDayLayout.astro`.
+
+## The event button in the menu
+
+The outlined button in the menu at the top of every page ("Community Day 2026") is set by `highlight` in `src/lib/site.js`: its label, the page it opens and the event date. It disappears by itself once the date has passed. To remove it sooner, replace the block with `highlight: null,`. To promote a different event, change the three values.
+
+On phones the button is the first item behind the Menu button. On tablets it stays in the bar next to Menu.
 
 ## Update the organizing team
 
