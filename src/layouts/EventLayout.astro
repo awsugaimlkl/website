@@ -1,53 +1,164 @@
 ---
+import { Image } from "astro:assets";
 import BaseLayout from "./BaseLayout.astro";
+import { isPast } from "../lib/dates.js";
+import { getPhoto } from "../lib/photos.js";
+import { SITE } from "../lib/site.js";
 
 const { frontmatter } = Astro.props;
 const {
   title,
   description,
+  date,
   dateDisplay,
   time,
+  startTime,
+  endTime,
   venue,
+  address,
+  mapUrl,
   registrationUrl,
-  status = "upcoming"
+  calendarFile,
+  meetupUrl,
+  albumUrl,
+  number,
+  signups,
+  talks = [],
+  photo,
+  photoAlt = "",
+  photoCaption,
 } = frontmatter;
+
+const past = isPast(date);
+const pastLabel = number ? `Meetup #${number}` : "Past event";
+const pageUrl = new URL(Astro.url.pathname, Astro.site);
+
+// Structured data so search engines can list this as an event.
+const eventData = {
+  "@context": "https://schema.org",
+  "@type": "Event",
+  name: title,
+  description,
+  startDate: startTime ? `${date}T${startTime}:00+08:00` : date,
+  ...(endTime ? { endDate: `${date}T${endTime}:00+08:00` } : {}),
+  eventStatus: "https://schema.org/EventScheduled",
+  eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+  url: pageUrl,
+  image: new URL("/og.png", Astro.site),
+  location: {
+    "@type": "Place",
+    name: venue,
+    ...(address ? { address } : {}),
+  },
+  organizer: {
+    "@type": "Organization",
+    name: SITE.name,
+    url: Astro.site,
+  },
+};
 ---
 
-<BaseLayout title={`${title} | AWS UG AI/ML Kuala Lumpur`} description={description}>
-  <main>
+<BaseLayout title={`${title} | ${SITE.shortName}`} description={description}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(eventData)} />
+
+  <main id="main">
     <section class="event-hero">
       <div class="container">
-        <span class="eyebrow">{status === "upcoming" ? "Upcoming Event" : "Past Event"}</span>
+        <span class="eyebrow" data-event-date={date} data-past-label={pastLabel}>
+          {past ? pastLabel : "Upcoming event"}
+        </span>
         <h1 class="gradient-text">{title}</h1>
         <p class="lead">{description}</p>
 
-        <div class="details">
+        <dl class="details">
           <div>
-            <small>Date</small>
-            <strong>{dateDisplay}</strong>
+            <dt>Date</dt>
+            <dd>{dateDisplay}</dd>
           </div>
           <div>
-            <small>Time</small>
-            <strong>{time}</strong>
+            <dt>Time</dt>
+            <dd>{time}</dd>
           </div>
           <div>
-            <small>Venue</small>
-            <strong>{venue}</strong>
+            <dt>Venue</dt>
+            <dd>{venue}</dd>
           </div>
-        </div>
+        </dl>
 
-        {registrationUrl && (
-          <a class="btn btn-primary" href={registrationUrl} target="_blank">
-            Register
-          </a>
-        )}
+        <div class="actions">
+          {registrationUrl && !past && (
+            <a class="btn btn-primary" href={registrationUrl} target="_blank" rel="noopener noreferrer">
+              Register
+            </a>
+          )}
+          {!registrationUrl && !past && (
+            <a class="btn btn-primary" href={SITE.meetup} target="_blank" rel="noopener noreferrer"
+               data-event-date={date} data-hide-when-past>
+              Get updates on Meetup
+            </a>
+          )}
+          {calendarFile && !past && (
+            <a class="btn btn-secondary" href={calendarFile} data-event-date={date} data-hide-when-past>
+              Add to calendar
+            </a>
+          )}
+          {mapUrl && (
+            <a class="btn btn-secondary" href={mapUrl} target="_blank" rel="noopener noreferrer">
+              Open in Google Maps
+            </a>
+          )}
+          {meetupUrl && (
+            <a class="btn btn-secondary" href={meetupUrl} target="_blank" rel="noopener noreferrer">
+              View on Meetup
+            </a>
+          )}
+          {albumUrl && (
+            <a class="btn btn-secondary" href={albumUrl} target="_blank" rel="noopener noreferrer">
+              See the photo album
+            </a>
+          )}
+        </div>
       </div>
     </section>
 
-    <section class="section">
-      <article class="container content card">
-        <slot />
-      </article>
+    <section class="event-body">
+      <div class="container">
+        <div class="column">
+          {photo && (
+            <figure class="photo">
+              <Image
+                src={getPhoto(photo)}
+                alt={photoAlt}
+                width={1800}
+                widths={[480, 900, 1400, 1800]}
+                sizes="(max-width: 960px) calc(100vw - 28px), 900px"
+                loading="eager"
+              />
+              {photoCaption && <figcaption>{photoCaption}</figcaption>}
+            </figure>
+          )}
+
+          <article class="content card prose">
+            {talks.length > 0 && (
+              <Fragment>
+                <h2>Talks</h2>
+                <ul class="talks">
+                  {talks.map((talk) => (
+                    <li>
+                      <strong>{talk.title}</strong>
+                      <span>{talk.speaker}</span>
+                    </li>
+                  ))}
+                </ul>
+              </Fragment>
+            )}
+            {signups && <p class="signups"><strong>{signups}</strong> people signed up on Meetup.</p>}
+            <slot />
+          </article>
+
+          <p class="back"><a class="text-link" href="/events/">All events</a></p>
+        </div>
+      </div>
     </section>
   </main>
 </BaseLayout>
@@ -68,7 +179,7 @@ const {
 }
 
 .details {
-  margin: 38px 0;
+  margin: 38px 0 28px;
   display: grid;
   grid-template-columns: repeat(3,1fr);
   max-width: 900px;
@@ -85,19 +196,35 @@ const {
 
 .details > div:last-child { border-right: 0; }
 
-.details small,
-.details strong {
+.details dt,
+.details dd {
   display: block;
+  margin: 0;
 }
 
-.details small {
+.details dt {
   color: var(--muted);
+  font-size: .85rem;
   margin-bottom: 5px;
+}
+
+.details dd {
+  font-weight: 700;
+}
+
+.event-body {
+  padding: 10px 0 88px;
+}
+
+/* Photo, text and back link share one column, lined up with the heading above */
+.column {
+  max-width: 900px;
+  display: grid;
+  gap: 28px;
 }
 
 .content {
   padding: 40px;
-  max-width: 900px;
 }
 
 .content :global(h2) {
@@ -105,13 +232,66 @@ const {
   font-size: 1.8rem;
 }
 
+.content :global(h2:first-child) {
+  margin-top: 0;
+}
+
 .content :global(li),
 .content :global(p) {
   color: #c4c4cc;
 }
 
+.content :global(li + li) {
+  margin-top: 6px;
+}
+
+.content :global(strong) {
+  color: #f4f4f5;
+}
+
+.talks {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.talks li {
+  padding: 16px 0;
+  border-top: 1px solid var(--border);
+}
+
+.talks li:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+.talks strong,
+.talks span {
+  display: block;
+}
+
+.talks strong {
+  font-size: 1.1rem;
+  line-height: 1.35;
+}
+
+.talks span {
+  margin-top: 4px;
+  color: #c4b5fd;
+}
+
+.signups {
+  margin: 22px 0 0;
+}
+
+.back {
+  margin: 0;
+}
+
 @media(max-width:700px) {
+  .event-hero { padding-top: 64px; }
   .details { grid-template-columns: 1fr; }
   .details > div { border-right:0; border-bottom:1px solid var(--border); }
+  .details > div:last-child { border-bottom: 0; }
+  .content { padding: 26px 22px; }
 }
 </style>

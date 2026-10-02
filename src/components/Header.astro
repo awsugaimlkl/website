@@ -1,33 +1,40 @@
+---
+import { Image } from "astro:assets";
+import logo from "../assets/logo.png";
+import { SITE } from "../lib/site.js";
+
+const links = [
+  { href: "/#about", label: "About" },
+  { href: "/events/", label: "Events" },
+  { href: "/#community", label: "Community" },
+  { href: "/#gallery", label: "Gallery" },
+];
+---
+
 <header class="site-header">
   <div class="container nav">
     <a href="/" class="brand">
-      <img
-        class="brand-logo"
-        src="/assets/awsug-aiml-kl-logo.png"
-        alt="AWS User Group AI/ML Kuala Lumpur"
-        width="32"
-        height="32"
-      />
+      <Image class="brand-logo" src={logo} alt="" width={48} densities={[1, 2, 3]} loading="eager" />
       <span>
         <strong>AWS UG AI/ML</strong>
         <small>Kuala Lumpur</small>
       </span>
     </a>
 
-    <nav>
-      <a href="/#about">About</a>
-      <a href="/events/">Events</a>
-      <a href="/#community">Community</a>
-      <a href="/#gallery">Gallery</a>
-      <a
-        class="meetup"
-        href="https://www.meetup.com/awsug-aiml-my/"
-        target="_blank"
-        rel="noreferrer"
-      >
-        Join Meetup
-      </a>
+    <!-- Wide screens: links in a row -->
+    <nav class="desktop-nav" aria-label="Main">
+      {links.map((link) => <a href={link.href}>{link.label}</a>)}
+      <a class="meetup" href={SITE.meetup} target="_blank" rel="noopener noreferrer">Join Meetup</a>
     </nav>
+
+    <!-- Phones: the same links behind a Menu button. Works without JavaScript. -->
+    <details class="mobile-nav">
+      <summary>Menu</summary>
+      <nav aria-label="Main">
+        {links.map((link) => <a href={link.href}>{link.label}</a>)}
+        <a class="meetup" href={SITE.meetup} target="_blank" rel="noopener noreferrer">Join Meetup</a>
+      </nav>
+    </details>
   </div>
 </header>
 
@@ -46,12 +53,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .brand strong,
@@ -60,34 +68,37 @@
 }
 
 .brand strong {
-  font-size: .92rem;
+  font-size: .95rem;
   line-height: 1.1;
 }
 
 .brand small {
   color: #a1a1aa;
-  font-size: .72rem;
+  font-size: .75rem;
   line-height: 1.1;
-  margin-top: 2px;
+  margin-top: 3px;
 }
 
 .brand-logo {
-  width: 32px;
-  height: 32px;
-  object-fit: contain;
+  width: 46px;
+  height: auto;
   display: block;
   flex-shrink: 0;
 }
 
-nav {
+.desktop-nav {
   display: flex;
   gap: 26px;
   align-items: center;
   font-size: .92rem;
 }
 
-nav a:not(.meetup) {
+.desktop-nav a:not(.meetup) {
   color: #d4d4d8;
+}
+
+.desktop-nav a:not(.meetup):hover {
+  color: #fff;
 }
 
 .meetup {
@@ -98,14 +109,64 @@ nav a:not(.meetup) {
   font-weight: 800;
 }
 
+.mobile-nav {
+  display: none;
+}
+
+.mobile-nav summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 9px 16px;
+  border: 1px solid #3f3f4a;
+  border-radius: 10px;
+  font-weight: 750;
+  font-size: .92rem;
+}
+
+.mobile-nav summary::-webkit-details-marker {
+  display: none;
+}
+
+.mobile-nav[open] summary {
+  background: rgba(255,255,255,.08);
+}
+
+.mobile-nav nav {
+  position: absolute;
+  top: 72px;
+  left: 0;
+  right: 0;
+  display: grid;
+  gap: 2px;
+  padding: 10px 14px 18px;
+  background: #0c0c10;
+  border-bottom: 1px solid var(--border);
+}
+
+.mobile-nav nav a:not(.meetup) {
+  padding: 13px 6px;
+  font-size: 1.05rem;
+  color: #e4e4e7;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+.mobile-nav .meetup {
+  margin-top: 14px;
+  padding: 13px 16px;
+  text-align: center;
+}
+
 @media (max-width: 760px) {
-  .brand-logo {
-    width: 28px;
-    height: 28px;
+  .desktop-nav {
+    display: none;
   }
 
-  nav a:not(.meetup) {
-    display: none;
+  .mobile-nav {
+    display: block;
+  }
+
+  .brand-logo {
+    width: 42px;
   }
 }
 </style>

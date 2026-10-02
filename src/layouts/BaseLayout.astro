@@ -1,26 +1,54 @@
 ---
+import "@fontsource-variable/inter";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import "../styles/global.css";
+import { SITE } from "../lib/site.js";
 
 const {
-  title = "AWS User Group AI/ML Kuala Lumpur",
-  description = "Kuala Lumpur community for builders, practitioners and enthusiasts working with AI, machine learning and AWS."
+  title = SITE.name,
+  description = SITE.description,
+  // Image shown when a link to this page is shared. 1200 x 630 works everywhere.
+  image = "/og.png",
+  noindex = false,
 } = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const imageUrl = new URL(image, Astro.site);
 ---
 
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
   <meta name="description" content={description} />
   <meta name="theme-color" content="#09090b" />
-  <title>{title}</title>
+  {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content={SITE.name} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:image" content={imageUrl} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" href="/favicon.ico" sizes="48x48" />
+  <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="sitemap" href="/sitemap-index.xml" />
+
+  <slot name="head" />
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
   <Header />
   <slot />
   <Footer />
+  <script is:inline src="/scripts/site.js" defer></script>
 </body>
 </html>

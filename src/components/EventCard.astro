@@ -1,21 +1,39 @@
 ---
-const { title, dateDisplay, venue, summary, href, featured = false } = Astro.props;
+const {
+  title,
+  date,
+  dateDisplay,
+  venue,
+  summary,
+  href,
+  past = false,
+  featured = false,
+  number,
+  signups,
+} = Astro.props;
+
+const label = past
+  ? number ? `Meetup #${number}` : "Past event"
+  : featured ? "Featured event" : "Upcoming event";
+const pastLabel = number ? `Meetup #${number}` : "Past event";
 ---
 
-<a class:list={["event-card", "card", { featured }]} href={href}>
-  <span class="eyebrow">{featured ? "Featured Event" : "Community Event"}</span>
+<a class:list={["event-card", "card", { featured: featured && !past }]} href={href}>
+  <span class="eyebrow" data-event-date={date} data-past-label={pastLabel}>{label}</span>
   <h3>{title}</h3>
   <div class="meta">{dateDisplay}</div>
   <div class="venue">{venue}</div>
   <p>{summary}</p>
-  <span class="more">View event →</span>
+  {signups && <p class="signups">{signups} signed up</p>}
+  <span class="more">{past ? "See what was covered" : "View event"}</span>
 </a>
 
 <style>
 .event-card {
   padding: 26px;
-  display: block;
-  transition: .2s ease;
+  display: flex;
+  flex-direction: column;
+  transition: transform .2s ease, border-color .2s ease;
 }
 
 .event-card:hover {
@@ -45,8 +63,23 @@ h3 {
   margin-top: 4px;
 }
 
+p {
+  margin: 14px 0 0;
+}
+
+.signups {
+  margin-top: 8px;
+  color: #d4d4d8;
+  font-weight: 600;
+}
+
 .more {
+  margin-top: auto;
+  padding-top: 18px;
   color: var(--orange);
   font-weight: 750;
+  text-decoration: underline;
+  text-decoration-color: rgba(255,153,0,.4);
+  text-underline-offset: 4px;
 }
 </style>

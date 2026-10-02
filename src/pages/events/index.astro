@@ -1,22 +1,17 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import EventCard from "../../components/EventCard.astro";
+import { getEvents } from "../../lib/events.js";
+import { SITE } from "../../lib/site.js";
 
-const modules = import.meta.glob("/src/pages/events/*.md", { eager: true });
-
-const events = Object.entries(modules)
-  .map(([path, mod]) => {
-    const slug = path.split("/").pop().replace(".md", "");
-    return {
-      ...mod.frontmatter,
-      href: `/events/${slug}/`
-    };
-  })
-  .sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+const { upcoming, past } = getEvents();
 ---
 
-<BaseLayout title="Events | AWS UG AI/ML Kuala Lumpur">
-  <main class="section">
+<BaseLayout
+  title={`Events | ${SITE.shortName}`}
+  description="Upcoming events and past meetups from AWS User Group AI/ML Kuala Lumpur, with the talks given at each one."
+>
+  <main id="main" class="section">
     <div class="container">
       <span class="eyebrow">Community Events</span>
       <h1>Learn, build and connect.</h1>
@@ -24,9 +19,28 @@ const events = Object.entries(modules)
         Meetups, workshops and community-led events for AI/ML practitioners and enthusiasts in Kuala Lumpur.
       </p>
 
-      <div class="grid-3 events">
-        {events.map(event => <EventCard {...event} />)}
-      </div>
+      <section class="group" aria-labelledby="upcoming-heading">
+        <h2 id="upcoming-heading">Upcoming</h2>
+        {upcoming.length > 0 ? (
+          <div class="grid-3">
+            {upcoming.map((event) => <EventCard {...event} />)}
+          </div>
+        ) : (
+          <p class="empty">
+            Nothing is scheduled right now. New meetups are announced on{" "}
+            <a class="text-link" href={SITE.meetup} target="_blank" rel="noopener noreferrer">Meetup</a>{" "}first.
+          </p>
+        )}
+      </section>
+
+      {past.length > 0 && (
+        <section class="group" aria-labelledby="past-heading">
+          <h2 id="past-heading">Past meetups</h2>
+          <div class="grid-3">
+            {past.map((event) => <EventCard {...event} />)}
+          </div>
+        </section>
+      )}
     </div>
   </main>
 </BaseLayout>
@@ -34,5 +48,7 @@ const events = Object.entries(modules)
 <style>
 h1 { max-width: 850px; margin: 12px 0; }
 .intro { max-width: 700px; font-size: 1.15rem; }
-.events { margin-top: 45px; }
+.group { margin-top: 56px; }
+.group h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin-bottom: 22px; }
+.empty { max-width: 640px; }
 </style>

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://awsugaimlkl.com/sitemap-index.xml

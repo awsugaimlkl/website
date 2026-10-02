@@ -1,21 +1,42 @@
 ---
+import { Image } from "astro:assets";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import EventCard from "../components/EventCard.astro";
+import logo from "../assets/logo.png";
+import { getEvents } from "../lib/events.js";
+import { getPhoto } from "../lib/photos.js";
+import { SITE } from "../lib/site.js";
 
-const modules = import.meta.glob("/src/pages/events/*.md", { eager: true });
+const { upcoming, past } = getEvents();
 
-const events = Object.entries(modules)
-  .map(([path, mod]) => {
-    const slug = path.split("/").pop().replace(".md", "");
-    return { ...mod.frontmatter, href: `/events/${slug}/` };
-  })
-  .sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+// The event shown in the highlight band: the next featured one, or simply the next one.
+const next = upcoming.find((e) => e.featured) ?? upcoming[0];
+// Any other upcoming events get their own section, so nothing is listed twice.
+const otherUpcoming = upcoming.filter((e) => e !== next);
+const recent = past.slice(0, 3);
 
-const upcoming = events.filter(e => new Date(e.date) >= new Date());
+const nextDate = next ? new Date(`${next.date}T12:00:00+08:00`) : null;
+const day = nextDate?.toLocaleDateString("en-GB", { day: "numeric", timeZone: "Asia/Kuala_Lumpur" });
+const month = nextDate?.toLocaleDateString("en-GB", { month: "short", timeZone: "Asia/Kuala_Lumpur" });
+const year = nextDate?.toLocaleDateString("en-GB", { year: "numeric", timeZone: "Asia/Kuala_Lumpur" });
+
+const organizationData = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: SITE.name,
+  url: Astro.site,
+  logo: new URL("/favicon-192.png", Astro.site),
+  description: SITE.description,
+  foundingDate: "2025-11",
+  areaServed: "Kuala Lumpur, Malaysia",
+  sameAs: [SITE.meetup, SITE.linkedin],
+};
 ---
 
 <BaseLayout>
-  <main>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(organizationData)} />
+
+  <main id="main">
 
     <section class="hero">
       <div class="container hero-grid">
@@ -29,9 +50,9 @@ const upcoming = events.filter(e => new Date(e.date) >= new Date());
             A community for practitioners, developers, engineers, students and enthusiasts exploring artificial intelligence and machine learning on AWS.
           </p>
 
-          <div class="hero-actions">
+          <div class="actions hero-actions">
             <a class="btn btn-primary" href="/events/">Explore events</a>
-            <a class="btn btn-secondary" href="https://www.meetup.com/awsug-aiml-my/" target="_blank">Join the community</a>
+            <a class="btn btn-secondary" href={SITE.meetup} target="_blank" rel="noopener noreferrer">Join on Meetup</a>
           </div>
 
           <div class="topics">
@@ -45,10 +66,13 @@ const upcoming = events.filter(e => new Date(e.date) >= new Date());
 
         <div class="visual">
           <div class="logo-showcase">
-            <img
+            <Image
               class="hero-logo"
-              src="/assets/awsug-aiml-kl-logo.png"
-              alt="AWS User Group AI/ML Kuala Lumpur"
+              src={logo}
+              alt="AWS User Group AI/ML Kuala Lumpur logo"
+              widths={[300, 420, 535]}
+              sizes="(max-width: 850px) 300px, 420px"
+              loading="eager"
             />
           </div>
           <div class="orb orange"></div>
@@ -58,67 +82,114 @@ const upcoming = events.filter(e => new Date(e.date) >= new Date());
       </div>
     </section>
 
-    <section class="community-day section">
-      <div class="container event-highlight">
-        <div>
-          <span class="eyebrow">14 November 2026 · Sunway University</span>
-          <h2>AWS AI/ML<br/>Community Day 2026</h2>
-          <p>
-            Our first Community Day brings together the AWS AI/ML community for a full day of technical talks, demos, knowledge sharing and networking.
-          </p>
-          <a class="btn btn-primary" href="/events/community-day-2026/">Event details</a>
-        </div>
+    {next && (
+      <section class="community-day section" data-event-date={next.date} data-hide-when-past>
+        <div class="container event-highlight">
+          <div>
+            <span class="eyebrow">Next event</span>
+            <h2>{next.title}</h2>
+            <p class="when">{next.dateDisplay}<br />{next.venue}</p>
+            <p>{next.description}</p>
+            <a class="btn btn-primary" href={next.href}>Event details</a>
+          </div>
 
-        <div class="date-block">
-          <strong>14</strong>
-          <span>NOV</span>
-          <small>2026</small>
+          <div class="date-block" aria-hidden="true">
+            <strong>{day}</strong>
+            <span>{month}</span>
+            <small>{year}</small>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    )}
 
     <section class="section" id="about">
       <div class="container">
         <span class="eyebrow">About the community</span>
         <h2>Built by the community,<br/>for the community.</h2>
+        <p class="about-copy">
+          We started in November 2025 and meet in person at company offices around Kuala Lumpur. Whether you are getting started with Amazon SageMaker, experimenting with generative AI on Amazon Bedrock, or running ML pipelines in production, you will find people here working on the same problems.
+        </p>
 
         <div class="grid-3 about-grid">
           <article class="card accent-purple">
-            <span>01</span>
             <h3>Learn</h3>
             <p>Technical talks, workshops and demonstrations covering practical AI/ML technologies and AWS services.</p>
           </article>
 
           <article class="card accent-orange">
-            <span>02</span>
             <h3>Share</h3>
             <p>A platform for practitioners to share lessons, architectures, experiments and real-world experiences.</p>
           </article>
 
           <article class="card accent-teal">
-            <span>03</span>
             <h3>Connect</h3>
             <p>Meet engineers, data scientists, developers, architects, students and fellow technology enthusiasts.</p>
           </article>
         </div>
+
+        <div class="proof">
+          <figure class="photo">
+            <Image
+              src={getPhoto("meetup-room")}
+              alt="A full room of attendees watching a talk, with the AWS User Groups AI/ML Kuala Lumpur banner beside the screen"
+              widths={[480, 760, 1100, 1462]}
+              sizes="(max-width: 850px) calc(100vw - 28px), 680px"
+            />
+          </figure>
+
+          <dl class="facts">
+            <div>
+              <dt>2,000+</dt>
+              <dd>members on Meetup</dd>
+            </div>
+            <div>
+              <dt>6</dt>
+              <dd>meetups since our first one in November 2025</dd>
+            </div>
+            <div>
+              <dt>4.7 of 5</dt>
+              <dd>average from 92 member ratings on Meetup</dd>
+            </div>
+          </dl>
+        </div>
       </div>
     </section>
 
-    <section class="section event-section">
-      <div class="container">
-        <div class="section-heading">
-          <div>
-            <span class="eyebrow">What's happening</span>
-            <h2>Upcoming events</h2>
+    {otherUpcoming.length > 0 && (
+      <section class="section event-section">
+        <div class="container">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">What's happening</span>
+              <h2>Upcoming events</h2>
+            </div>
+            <a class="text-link" href="/events/">View all events</a>
           </div>
-          <a href="/events/">View all events →</a>
-        </div>
 
-        <div class="grid-3">
-          {upcoming.slice(0,3).map(event => <EventCard {...event} />)}
+          <div class="grid-3">
+            {otherUpcoming.slice(0, 3).map((event) => <EventCard {...event} />)}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    )}
+
+    {recent.length > 0 && (
+      <section class="section event-section">
+        <div class="container">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">What we have covered</span>
+              <h2>Recent meetups</h2>
+            </div>
+            <a class="text-link" href="/events/">View all events</a>
+          </div>
+
+          <div class="grid-3">
+            {recent.map((event) => <EventCard {...event} />)}
+          </div>
+        </div>
+      </section>
+    )}
 
     <section class="section" id="community">
       <div class="container">
@@ -126,20 +197,50 @@ const upcoming = events.filter(e => new Date(e.date) >= new Date());
         <h2>Join the AWS AI/ML community.</h2>
 
         <div class="social-grid">
-          <a class="social card meetup-card" href="https://www.meetup.com/awsug-aiml-my/" target="_blank">
+          <a class="social card meetup-card" href={SITE.meetup} target="_blank" rel="noopener noreferrer">
             <span>Meetup</span>
-            <strong>Attend our next event →</strong>
+            <strong>Attend our next event</strong>
           </a>
 
-          <a class="social card linkedin-card" href="https://www.linkedin.com/company/aws-user-groups-ai-ml-kuala-lumpur/" target="_blank">
+          <a class="social card linkedin-card" href={SITE.linkedin} target="_blank" rel="noopener noreferrer">
             <span>LinkedIn</span>
-            <strong>Follow community updates →</strong>
+            <strong>Follow community updates</strong>
           </a>
 
-          <a class="social card facebook-card" href="https://www.facebook.com/share/g/1JWLK8ykeb/?mibextid=wwXIfr" target="_blank">
+          <a class="social card facebook-card" href={SITE.facebook} target="_blank" rel="noopener noreferrer">
             <span>Facebook</span>
-            <strong>Join the discussion →</strong>
+            <strong>Join the discussion</strong>
           </a>
+        </div>
+
+        <div class="ways">
+          <div>
+            <h3>Give a talk</h3>
+            <p>Built something with Bedrock, SageMaker or agents on AWS? Show it. We run full talks and short lightning talks.</p>
+            <a class="text-link" href={SITE.linkedin} target="_blank" rel="noopener noreferrer">Propose a talk on LinkedIn</a>
+          </div>
+          <div>
+            <h3>Host a meetup</h3>
+            <p>We meet at offices around Kuala Lumpur. Past hosts are AWS Malaysia, The Access Group, Arvato Systems and Xendit.</p>
+            <a class="text-link" href={SITE.linkedin} target="_blank" rel="noopener noreferrer">Offer a venue on LinkedIn</a>
+          </div>
+          <div>
+            <h3>Volunteer or sponsor</h3>
+            <p>Help run a meetup or Community Day on the day, or support the group as a sponsor.</p>
+            <a class="text-link" href={SITE.linkedin} target="_blank" rel="noopener noreferrer">Message us on LinkedIn</a>
+          </div>
+        </div>
+
+        <div class="organisers card">
+          <div>
+            <span class="eyebrow">Who runs the group</span>
+            <h3>Kuan Hoong</h3>
+            <p>Organiser. AWS Community Builder and Google Developer Expert in Machine Learning.</p>
+          </div>
+          <p class="team">
+            Kuan Hoong runs the group with four co-organisers.{" "}
+            <a class="text-link" href={SITE.meetupLeaders} target="_blank" rel="noopener noreferrer">Meet the whole team on Meetup</a>.
+          </p>
         </div>
       </div>
     </section>
@@ -150,17 +251,37 @@ const upcoming = events.filter(e => new Date(e.date) >= new Date());
         <h2>Previous meetups</h2>
 
         <div class="gallery-grid">
-          <a href="https://photos.app.goo.gl/13eRnUZjgnFzkSt69" target="_blank" class="gallery g1">
-            <span>Community Album 01</span>
+          <a class="gallery" href="/events/2026-05-meetup/">
+            <Image
+              src={getPhoto("2026-05-meetup")}
+              alt="A speaker presents on spec-driven development to a full room under hexagon-shaped ceiling lights"
+              width={1100}
+              widths={[480, 760, 1100]}
+              sizes="(max-width: 850px) calc(100vw - 28px), 440px"
+            />
+            <span>May 2026 at Xendit Malaysia</span>
           </a>
 
-          <a href="https://photos.app.goo.gl/sdN9weecTJRPnyNw7" target="_blank" class="gallery g2">
-            <span>Community Album 02</span>
+          <a class="gallery" href="/events/2026-04-meetup/">
+            <Image
+              src={getPhoto("2026-04-meetup")}
+              alt="A speaker with a microphone talks to rows of seated attendees in a meeting room"
+              width={1100}
+              widths={[480, 760, 1100]}
+              sizes="(max-width: 850px) calc(100vw - 28px), 440px"
+            />
+            <span>April 2026 at Arvato Systems</span>
           </a>
 
-          <a href="https://photos.app.goo.gl/5CeVYFS48nEERN578" target="_blank" class="gallery g3">
-            <span>Community Album 03</span>
-          </a>
+          <div class="albums card">
+            <h3>Photo albums</h3>
+            <p>Every photo from the night, on Google Photos.</p>
+            <ul>
+              <li><a class="text-link" href="https://photos.app.goo.gl/13eRnUZjgnFzkSt69" target="_blank" rel="noopener noreferrer">May 2026 meetup</a></li>
+              <li><a class="text-link" href="https://photos.app.goo.gl/sdN9weecTJRPnyNw7" target="_blank" rel="noopener noreferrer">April 2026 meetup</a></li>
+              <li><a class="text-link" href="https://photos.app.goo.gl/5CeVYFS48nEERN578" target="_blank" rel="noopener noreferrer">November 2025 meetup</a></li>
+            </ul>
+          </div>
         </div>
       </div>
     </section>
@@ -194,8 +315,6 @@ const upcoming = events.filter(e => new Date(e.date) >= new Date());
 }
 
 .hero-actions {
-  display: flex;
-  gap: 12px;
   margin-top: 32px;
 }
 
@@ -226,7 +345,6 @@ const upcoming = events.filter(e => new Date(e.date) >= new Date());
   width: 100%;
   height: auto;
   display: block;
-  object-fit: contain;
 }
 
 .orb {
@@ -278,11 +396,23 @@ const upcoming = events.filter(e => new Date(e.date) >= new Date());
 }
 
 .event-highlight h2 {
-  margin: 12px 0 22px;
+  margin: 12px 0 16px;
 }
 
 .event-highlight p {
   max-width: 700px;
+}
+
+.event-highlight .when {
+  margin: 0 0 14px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.15rem;
+  line-height: 1.4;
+}
+
+.event-highlight .btn {
+  margin-top: 8px;
 }
 
 .date-block {
@@ -305,41 +435,83 @@ const upcoming = events.filter(e => new Date(e.date) >= new Date());
 .date-block span {
   font-size: 1.7rem;
   letter-spacing: .25em;
+  text-transform: uppercase;
   margin-top: 14px;
 }
 
 .date-block small { color: var(--muted); }
 
+.about-copy {
+  max-width: 760px;
+  font-size: 1.12rem;
+  margin: 0;
+}
+
 .about-grid { margin-top: 42px; }
 
 .about-grid article {
   padding: 28px;
-  min-height: 260px;
-}
-
-.about-grid article > span {
-  font-weight: 900;
-  font-size: .8rem;
 }
 
 .about-grid h3 {
-  margin: 28px 0 12px;
+  margin: 6px 0 12px;
   font-size: 1.9rem;
+}
+
+.about-grid p {
+  margin: 0;
 }
 
 .accent-purple { border-top: 3px solid var(--purple); }
 .accent-orange { border-top: 3px solid var(--orange); }
 .accent-teal { border-top: 3px solid var(--teal); }
 
+.proof {
+  display: grid;
+  grid-template-columns: 1.45fr 1fr;
+  gap: 50px;
+  align-items: center;
+  margin-top: 56px;
+}
+
+.facts {
+  margin: 0;
+}
+
+.facts > div {
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+}
+
+.facts > div:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+.facts dt {
+  font-size: clamp(2rem, 3.4vw, 2.8rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.04em;
+}
+
+.facts dd {
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+
+.event-section {
+  padding-top: 20px;
+}
+
 .section-heading {
   display: flex;
   justify-content: space-between;
   align-items: end;
+  gap: 20px;
   margin-bottom: 32px;
 }
 
 .section-heading h2 { margin-bottom: 0; }
-.section-heading > a { color: var(--orange); }
 
 .social-grid {
   display: grid;
@@ -349,11 +521,11 @@ const upcoming = events.filter(e => new Date(e.date) >= new Date());
 
 .social {
   padding: 28px;
-  min-height: 165px;
+  min-height: 150px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: .2s ease;
+  transition: transform .2s ease;
 }
 
 .social:hover { transform: translateY(-4px); }
@@ -365,40 +537,109 @@ const upcoming = events.filter(e => new Date(e.date) >= new Date());
 .linkedin-card { border-bottom: 3px solid var(--purple); }
 .facebook-card { border-bottom: 3px solid var(--teal); }
 
+.ways {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 34px 40px;
+  margin-top: 56px;
+}
+
+.ways h3 {
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+}
+
+.ways p {
+  margin: 0 0 12px;
+}
+
+.organisers {
+  margin-top: 56px;
+  padding: 30px 34px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px 50px;
+  align-items: center;
+}
+
+.organisers h3 {
+  font-size: 1.6rem;
+  margin: 10px 0 6px;
+}
+
+.organisers p {
+  margin: 0;
+}
+
 .gallery-grid {
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr .8fr;
   gap: 18px;
   margin-top: 36px;
 }
 
 .gallery {
-  height: 280px;
+  position: relative;
+  display: block;
   border-radius: 22px;
   border: 1px solid var(--border);
-  padding: 24px;
-  display: flex;
-  align-items: end;
-  font-weight: 800;
-  transition: .2s ease;
+  overflow: hidden;
+  transition: transform .2s ease;
 }
 
 .gallery:hover { transform: translateY(-4px); }
 
-.g1 { background: linear-gradient(145deg,#2e1065,#18181b 65%); }
-.g2 { background: linear-gradient(145deg,#78350f,#18181b 65%); }
-.g3 { background: linear-gradient(145deg,#134e4a,#18181b 65%); }
+.gallery :global(img) {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  object-fit: cover;
+}
+
+.gallery span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 44px 22px 18px;
+  font-weight: 800;
+  background: linear-gradient(to top, rgba(9,9,11,.92), rgba(9,9,11,0));
+}
+
+.albums {
+  padding: 26px;
+}
+
+.albums h3 {
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+}
+
+.albums p {
+  margin: 0 0 14px;
+}
+
+.albums ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
 
 @media(max-width:850px) {
-  .hero { min-height: auto; padding-top: 70px; }
-  .hero-grid { grid-template-columns: 1fr; }
-  .visual { min-height: 340px; }
-  .logo-showcase { width: min(300px, 82%); }
+  .hero { min-height: auto; padding: 60px 0 40px; }
+  .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+  .visual { min-height: 320px; }
+  .logo-showcase { width: min(280px, 78%); }
   .event-highlight { grid-template-columns:1fr; padding:30px; }
   .date-block { width:100%; height:170px; }
+  .proof,
   .social-grid,
+  .ways,
+  .organisers,
   .gallery-grid { grid-template-columns:1fr; }
-  .gallery { height:180px; }
   .section-heading { align-items:start; flex-direction:column; gap:10px; }
 }
 </style>

@@ -1,19 +1,29 @@
+---
+import { Image } from "astro:assets";
+import logo from "../assets/logo.png";
+import { SITE } from "../lib/site.js";
+---
+
 <footer>
   <div class="container footer-grid">
-    <div>
-      <strong>AWS User Group AI/ML Kuala Lumpur</strong>
-      <p>Learn. Build. Share. Connect.</p>
+    <div class="about">
+      <Image class="footer-logo" src={logo} alt="" width={96} densities={[1, 2]} loading="lazy" />
+      <div>
+        <strong>{SITE.name}</strong>
+        <p>A community run by volunteers. Part of the Global AWS User Group Community.</p>
+      </div>
     </div>
 
     <div class="links">
-      <a href="https://www.meetup.com/awsug-aiml-my/" target="_blank">Meetup</a>
-      <a href="https://www.linkedin.com/company/aws-user-groups-ai-ml-kuala-lumpur/" target="_blank">LinkedIn</a>
-      <a href="https://www.facebook.com/share/g/1JWLK8ykeb/?mibextid=wwXIfr" target="_blank">Facebook</a>
+      <a href="/events/">Events</a>
+      <a href={SITE.meetup} target="_blank" rel="noopener noreferrer">Meetup</a>
+      <a href={SITE.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+      <a href={SITE.facebook} target="_blank" rel="noopener noreferrer">Facebook</a>
     </div>
   </div>
 
   <div class="container legal">
-    Community-led AWS user group. AWS and related marks are trademarks of Amazon.com, Inc. or its affiliates.
+    {SITE.name} is an independent community and is not operated by Amazon Web Services. AWS and related marks are trademarks of Amazon.com, Inc. or its affiliates.
   </div>
 </footer>
 
@@ -30,17 +40,46 @@ footer {
   gap: 30px;
 }
 
+.about {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.about p {
+  margin: 6px 0 0;
+  max-width: 420px;
+}
+
+.footer-logo {
+  width: 84px;
+  height: auto;
+  flex-shrink: 0;
+}
+
 .links {
   display: flex;
-  gap: 20px;
+  flex-wrap: wrap;
+  gap: 8px 22px;
   align-items: start;
+}
+
+.links a {
+  padding: 4px 0;
+  text-decoration: underline;
+  text-decoration-color: #52525b;
+  text-underline-offset: 4px;
+}
+
+.links a:hover {
+  text-decoration-color: currentColor;
 }
 
 .legal {
   margin-top: 40px;
   padding-top: 22px;
   border-top: 1px solid var(--border);
-  color: #71717a;
+  color: var(--muted);
   font-size: .8rem;
 }
 
