@@ -5,7 +5,9 @@ import EventCard from "../components/EventCard.astro";
 import logo from "../assets/logo.png";
 import { getEvents } from "../lib/events.js";
 import { getPhoto } from "../lib/photos.js";
+import TeamMember from "../components/TeamMember.astro";
 import { SITE } from "../lib/site.js";
+import { TEAM } from "../lib/team.js";
 
 const { upcoming, past } = getEvents();
 
@@ -231,16 +233,17 @@ const organizationData = {
           </div>
         </div>
 
-        <div class="organisers card">
-          <div>
-            <span class="eyebrow">Who runs the group</span>
-            <h3>Kuan Hoong</h3>
-            <p>Organiser. AWS Community Builder and Google Developer Expert in Machine Learning.</p>
-          </div>
-          <p class="team">
-            Kuan Hoong runs the group with four co-organisers.{" "}
-            <a class="text-link" href={SITE.meetupLeaders} target="_blank" rel="noopener noreferrer">Meet the whole team on Meetup</a>.
-          </p>
+      </div>
+    </section>
+
+    <section class="section team-section" id="team">
+      <div class="container">
+        <span class="eyebrow">Who runs the group</span>
+        <h2>Organizing team</h2>
+        <p class="team-copy">The group is run by volunteers. Say hello at the next meetup, or reach out on LinkedIn.</p>
+
+        <div class="grid-3 team-grid">
+          {TEAM.map((member) => <TeamMember {...member} />)}
         </div>
       </div>
     </section>
@@ -553,22 +556,18 @@ const organizationData = {
   margin: 0 0 12px;
 }
 
-.organisers {
-  margin-top: 56px;
-  padding: 30px 34px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px 50px;
-  align-items: center;
+.team-section {
+  padding-top: 20px;
 }
 
-.organisers h3 {
-  font-size: 1.6rem;
-  margin: 10px 0 6px;
-}
-
-.organisers p {
+.team-copy {
+  max-width: 640px;
+  font-size: 1.12rem;
   margin: 0;
+}
+
+.team-grid {
+  margin-top: 36px;
 }
 
 .gallery-grid {
@@ -638,7 +637,6 @@ const organizationData = {
   .proof,
   .social-grid,
   .ways,
-  .organisers,
   .gallery-grid { grid-template-columns:1fr; }
   .section-heading { align-items:start; flex-direction:column; gap:10px; }
 }

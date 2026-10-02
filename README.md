@@ -24,8 +24,10 @@ src/pages/events/*.md            One file per event
 src/layouts/EventLayout.astro    How an event page looks
 src/components/                  Header, footer, event card
 src/lib/site.js                  Group name and the Meetup, LinkedIn, Facebook links
+src/lib/team.js                  The organizing team shown on the home page
 src/assets/logo.png              The logo. Astro resizes it where it is used
 src/assets/photos/               Event photos. Astro resizes and compresses them
+src/assets/team/                 Team photos, one per person
 public/                          Files copied as they are: favicons, og.png, _headers, _redirects
 ```
 
@@ -67,6 +69,12 @@ talks:
 Text below the second `---` is the body of the page and is written in Markdown.
 
 An event is listed as upcoming until the end of its day in Malaysia time. The home page highlights the next upcoming event that has `featured: true`, or simply the next one. Remember to update the meetup count in the "facts" block on the home page.
+
+## Update the organizing team
+
+The team shown on the home page is listed in `src/lib/team.js`: name, role, LinkedIn link, initials and photo name. Add, remove or reorder entries there.
+
+Photos go in `src/assets/team/`, named to match the `photo` value, for example `src/assets/team/kuan-hoong.jpg`. Use a square photo of about 600 by 600 pixels with the face near the centre. Until a photo is added, the card shows the person's initials.
 
 ## Add a photo
 
