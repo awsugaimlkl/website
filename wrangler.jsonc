@@ -4,5 +4,9 @@
   "assets": {
     "directory": "./dist",
     "not_found_handling": "404-page"
-  }
+  },
+  // Cloudflare builds a preview for every branch other than main with
+  // `npx wrangler preview`, which refuses to run without this block.
+  // It is empty because the site has no variables, secrets or bindings.
+  "previews": {}
 }
