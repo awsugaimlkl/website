@@ -1,11 +1,11 @@
 ---
-layout: ../../layouts/EventLayout.astro
+layout: ../../layouts/CommunityDayLayout.astro
 title: "AWS AI/ML Community Day 2026"
 description: "A community-led day for AI/ML builders, practitioners, students and technology leaders to learn, share and connect."
 date: "2026-11-14"
 dateDisplay: "Saturday, 14 November 2026"
 time: "9:00 AM – 5:00 PM"
-startTime: "09:00"
+startTime: "09:00"             # the countdown on the page runs to this time
 endTime: "17:00"
 venue: "Sunway University, Selangor"
 address: "No. 5, Jalan Universiti, Bandar Sunway, 47500 Selangor, Malaysia"
@@ -16,47 +16,69 @@ summary: "The first AWS AI/ML Community Day organized by AWS User Group AI/ML Ku
 photo: "2026-05-meetup-wide"
 photoAlt: "A speaker presents to a full room of attendees under hexagon-shaped ceiling lights"
 photoCaption: "Our May 2026 meetup at Xendit Malaysia."
-# Add this line when registration opens and the Register button appears on the page:
-# registrationUrl: "https://..."
----
 
-## About the event
+# Call for speakers. While this line is here, the page shows "Apply to speak" buttons.
+# Put a # in front of it when the call closes.
+callForSpeakersUrl: "https://forms.gle/Uf1Hd2cmpmfuyzK88"
+
+# Topics shown under the call for speakers.
+topics:
+  - "Generative AI"
+  - "Agentic AI"
+  - "Amazon Bedrock"
+  - "Amazon SageMaker"
+  - "Machine learning"
+  - "MLOps"
+
+# Add this line when registration opens and a Register button appears on the page:
+# registrationUrl: "https://..."
+
+# Short points shown under the About text.
+highlights:
+  - title: "Run by the community"
+    text: "Planned and delivered by volunteers from the user group."
+  - title: "Technical sessions"
+    text: "Talks on AI, machine learning, generative AI and agentic AI."
+  - title: "Real-world experience"
+    text: "AWS architectures and implementations, shared by the people who built them."
+  - title: "People to meet"
+    text: "Time with speakers, community leaders and fellow AI/ML practitioners."
+
+# Speakers. Remove the # signs and add one entry per speaker.
+# photo is a file name in src/assets/speakers without the extension; leave it out to show initials.
+# speakers:
+#   - name: "Full name"
+#     role: "Job title, Company"
+#     talk: "Talk title"
+#     linkedin: "https://www.linkedin.com/in/..."
+#     photo: "full-name"
+
+# Schedule. Remove the # signs and add one entry per slot, in order.
+# agenda:
+#   - time: "9:00 AM"
+#     title: "Registration"
+#   - time: "10:00 AM"
+#     title: "Talk title"
+#     speaker: "Speaker name"
+
+# Sponsors and partners. Entries with the same tier are grouped under one heading.
+# logo is a file name in src/assets/sponsors without the extension; leave it out to show the name.
+# sponsors:
+#   - name: "Company name"
+#     tier: "Gold sponsor"
+#     url: "https://..."
+#     logo: "company-name"
+
+venueNote: "The building and room will be confirmed closer to the event."
+gettingThere:
+  - how: "By BRT and LRT"
+    text: "The closest station is SunU-Monash on the BRT Sunway Line. The BRT connects to the LRT Kelana Jaya Line at USJ 7."
+  - how: "By car"
+    text: "Parking is available in the university basement and at the BRT Park and Ride at SunU-Monash station."
+  - how: "On foot from Sunway City"
+    text: "A covered, elevated walkway links the campus to the rest of Bandar Sunway."
+---
 
 AWS AI/ML Community Day 2026 brings together the local artificial intelligence, machine learning and cloud community for a full day of technical talks, practical demonstrations, community sharing and networking.
 
 This is the first Community Day organized by AWS User Group AI/ML Kuala Lumpur. AWS Community Days are planned and delivered by user groups, and the talks come from people who use AWS in their daily work.
-
-## What to expect
-
-- Technical sessions on AI, machine learning, generative AI and agentic AI
-- Real-world AWS architecture and implementation experiences
-- Community-led talks from practitioners and builders
-- Opportunities to meet fellow AI/ML professionals and enthusiasts
-- Networking with speakers, community leaders and technology practitioners
-
-## Take part
-
-Community Day is built by the people who show up for it. Message us on [LinkedIn](https://www.linkedin.com/company/aws-user-groups-ai-ml-kuala-lumpur/) if you would like to:
-
-- **Speak.** Tell us what you have built, shipped or run with AI on AWS.
-- **Sponsor.** Support the day and meet the people building AI on AWS in Malaysia.
-- **Volunteer.** Help with registration, rooms and speakers on the day.
-
-## Speakers and agenda
-
-Speaker announcements and the full agenda are coming soon.
-
-## Registration
-
-Registration is not open yet. We will announce it on [Meetup](https://www.meetup.com/awsug-aiml-my/), LinkedIn and Facebook, and update this page on the same day.
-
-## Venue and getting there
-
-**Sunway University**<br>
-No. 5, Jalan Universiti, Bandar Sunway, 47500 Selangor, Malaysia
-
-The building and room will be confirmed closer to the event.
-
-- **By BRT and LRT.** The closest station is SunU-Monash on the BRT Sunway Line. The BRT connects to the LRT Kelana Jaya Line at USJ 7.
-- **By car.** Parking is available in the university basement and at the BRT Park and Ride at SunU-Monash station.
-- **On foot from Sunway City.** A covered, elevated walkway links the campus to the rest of Bandar Sunway.

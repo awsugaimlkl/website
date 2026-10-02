@@ -27,4 +27,54 @@
     if (el.hasAttribute("data-hide-when-past")) el.hidden = true;
     if (el.hasAttribute("data-past-label")) el.textContent = el.getAttribute("data-past-label");
   });
+
+  // 3. Countdown to the start of an event. The start time is in the data-countdown
+  //    attribute. The countdown stays hidden until this has filled in the numbers,
+  //    and is removed once the event has started.
+  document.querySelectorAll("[data-countdown]").forEach(function (el) {
+    var start = Date.parse(el.getAttribute("data-countdown"));
+    if (isNaN(start)) return;
+
+    var cells = {};
+    el.querySelectorAll("[data-unit]").forEach(function (cell) {
+      cells[cell.getAttribute("data-unit")] = cell;
+    });
+
+    var timer;
+
+    function pad(n) {
+      return n < 10 ? "0" + n : String(n);
+    }
+
+    function set(unit, text) {
+      if (cells[unit]) cells[unit].textContent = text;
+    }
+
+    function tick() {
+      var seconds = Math.floor((start - Date.now()) / 1000);
+      if (seconds <= 0) {
+        el.hidden = true;
+        clearInterval(timer);
+        return false;
+      }
+      set("days", String(Math.floor(seconds / 86400)));
+      set("hours", pad(Math.floor((seconds % 86400) / 3600)));
+      set("minutes", pad(Math.floor((seconds % 3600) / 60)));
+      set("seconds", pad(seconds % 60));
+      return true;
+    }
+
+    if (!tick()) return;
+
+    // Screen readers get one plain sentence instead of numbers that change every second.
+    var summary = el.querySelector("[data-countdown-summary]");
+    if (summary) {
+      var days = Math.floor((start - Date.now()) / 86400000);
+      summary.textContent =
+        days > 1 ? days + " days to go." : days === 1 ? "1 day to go." : "Starts in less than a day.";
+    }
+
+    el.classList.add("is-live");
+    timer = setInterval(tick, 1000);
+  });
 })();

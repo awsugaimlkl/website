@@ -4,6 +4,7 @@ import BaseLayout from "./BaseLayout.astro";
 import { isPast } from "../lib/dates.js";
 import { getPhoto } from "../lib/photos.js";
 import { SITE } from "../lib/site.js";
+import { eventStructuredData } from "../lib/structured-data.js";
 
 const { frontmatter } = Astro.props;
 const {
@@ -12,10 +13,7 @@ const {
   date,
   dateDisplay,
   time,
-  startTime,
-  endTime,
   venue,
-  address,
   mapUrl,
   registrationUrl,
   calendarFile,
@@ -34,28 +32,7 @@ const pastLabel = number ? `Meetup #${number}` : "Past event";
 const pageUrl = new URL(Astro.url.pathname, Astro.site);
 
 // Structured data so search engines can list this as an event.
-const eventData = {
-  "@context": "https://schema.org",
-  "@type": "Event",
-  name: title,
-  description,
-  startDate: startTime ? `${date}T${startTime}:00+08:00` : date,
-  ...(endTime ? { endDate: `${date}T${endTime}:00+08:00` } : {}),
-  eventStatus: "https://schema.org/EventScheduled",
-  eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-  url: pageUrl,
-  image: new URL("/og.png", Astro.site),
-  location: {
-    "@type": "Place",
-    name: venue,
-    ...(address ? { address } : {}),
-  },
-  organizer: {
-    "@type": "Organization",
-    name: SITE.name,
-    url: Astro.site,
-  },
-};
+const eventData = eventStructuredData(frontmatter, pageUrl, Astro.site);
 ---
 
 <BaseLayout title={`${title} | ${SITE.shortName}`} description={description}>

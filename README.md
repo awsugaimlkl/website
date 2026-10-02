@@ -21,13 +21,16 @@ npx wrangler dev   # serves ./dist the way Cloudflare does, at http://localhost:
 src/pages/index.astro            Home page
 src/pages/events/index.astro     Events list (upcoming and past)
 src/pages/events/*.md            One file per event
-src/layouts/EventLayout.astro    How an event page looks
-src/components/                  Header, footer, event card
+src/layouts/EventLayout.astro    How a meetup page looks
+src/layouts/CommunityDayLayout.astro  How the Community Day page looks
+src/components/                  Header, footer, event card, team member, speaker
 src/lib/site.js                  Group name, the Meetup, LinkedIn, Facebook links and the Google Analytics ID
 src/lib/team.js                  The organizing team shown on the home page
 src/assets/logo.png              The logo. Astro resizes it where it is used
 src/assets/photos/               Event photos. Astro resizes and compresses them
 src/assets/team/                 Team photos, one per person
+src/assets/speakers/             Speaker photos for Community Day
+src/assets/sponsors/             Sponsor and partner logos for Community Day
 public/                          Files copied as they are: favicons, og.png, _headers, _redirects
 ```
 
@@ -69,6 +72,22 @@ talks:
 Text below the second `---` is the body of the page and is written in Markdown.
 
 An event is listed as upcoming until the end of its day in Malaysia time. The home page highlights the next upcoming event that has `featured: true`, or simply the next one. Remember to update the meetup count in the "facts" block on the home page.
+
+## Update the Community Day page
+
+Everything on the page comes from the top of `src/pages/events/community-day-2026.md`. The file has a commented example for each list, so remove the `#` signs and fill in the details.
+
+- **Call for speakers.** `callForSpeakersUrl` is the application form. While the line is there, the page shows "Apply to speak" buttons. Put a `#` in front of it when the call closes.
+- **Speakers.** Add an entry under `speakers` with `name`, `role`, `talk`, `linkedin` and `photo`. Photos go in `src/assets/speakers/`. A speaker without a photo is shown with their initials.
+- **Schedule.** Add an entry under `agenda` for each slot with `time`, `title` and, for a talk, `speaker`.
+- **Registration.** Add `registrationUrl` and a Register button appears at the top of the page and in the Registration section.
+- **Sponsors and partners.** Add an entry under `sponsors` with `name`, `tier`, `url` and `logo`. Entries with the same `tier` are grouped under one heading. Logos go in `src/assets/sponsors/`.
+- **Countdown.** It runs to `startTime` on `date`, in Malaysia time, and disappears once the event starts.
+- **Venue.** `venueNote` and `gettingThere` hold the room note and the travel directions.
+
+The organizing team on the page is the same list as the home page, from `src/lib/team.js`. If the date or time changes, update `public/community-day-2026.ics` as well, which is the file behind the "Add to calendar" button.
+
+To use the same page for a later event, copy the file and keep `layout: ../../layouts/CommunityDayLayout.astro`.
 
 ## Update the organizing team
 
