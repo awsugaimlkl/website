@@ -42,6 +42,14 @@ const imageUrl = new URL(image, Astro.site);
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="sitemap" href="/sitemap-index.xml" />
 
+  {/* Google Analytics. The ID is set in src/lib/site.js; remove it there to switch tracking off. */}
+  {SITE.googleAnalyticsId && (
+    <>
+      <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${SITE.googleAnalyticsId}`}></script>
+      <script is:inline src="/scripts/analytics.js" data-measurement-id={SITE.googleAnalyticsId}></script>
+    </>
+  )}
+
   <slot name="head" />
 </head>
 <body>

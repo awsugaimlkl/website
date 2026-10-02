@@ -23,7 +23,7 @@ src/pages/events/index.astro     Events list (upcoming and past)
 src/pages/events/*.md            One file per event
 src/layouts/EventLayout.astro    How an event page looks
 src/components/                  Header, footer, event card
-src/lib/site.js                  Group name and the Meetup, LinkedIn, Facebook links
+src/lib/site.js                  Group name, the Meetup, LinkedIn, Facebook links and the Google Analytics ID
 src/lib/team.js                  The organizing team shown on the home page
 src/assets/logo.png              The logo. Astro resizes it where it is used
 src/assets/photos/               Event photos. Astro resizes and compresses them
@@ -89,6 +89,7 @@ These are set in the Cloudflare dashboard, not in this repo.
 
 ## Things worth knowing
 
-- `public/_headers` sets a strict Content-Security-Policy. It allows only files from this site, so an embedded video, an analytics script or a font from another site needs a matching entry there.
+- `public/_headers` sets a strict Content-Security-Policy. It allows only files from this site plus the Google Analytics addresses, so an embedded video, another script or a font from another site needs a matching entry there.
+- Google Analytics is loaded on every page by `src/layouts/BaseLayout.astro`. The measurement ID is `googleAnalyticsId` in `src/lib/site.js`; set it to `""` to switch tracking off. The setup code is in `public/scripts/analytics.js` rather than inline in the page, because the Content-Security-Policy blocks inline scripts.
 - `public/_redirects` holds short links: `/meetup`, `/linkedin`, `/facebook` and `/community-day`.
 - The link-preview image is `public/og.png` (1200 by 630).

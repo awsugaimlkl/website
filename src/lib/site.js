@@ -8,4 +8,6 @@ export const SITE = {
   meetup: "https://www.meetup.com/awsug-aiml-my/",
   linkedin: "https://www.linkedin.com/company/aws-user-groups-ai-ml-kuala-lumpur/",
   facebook: "https://www.facebook.com/share/g/1JWLK8ykeb/?mibextid=wwXIfr",
+  // Google Analytics measurement ID. Set to "" to switch tracking off.
+  googleAnalyticsId: "G-NY3PKDFBWZ",
 };
