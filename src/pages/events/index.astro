@@ -1,0 +1,38 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import EventCard from "../../components/EventCard.astro";
+
+const modules = import.meta.glob("/src/pages/events/*.md", { eager: true });
+
+const events = Object.entries(modules)
+  .map(([path, mod]) => {
+    const slug = path.split("/").pop().replace(".md", "");
+    return {
+      ...mod.frontmatter,
+      href: `/events/${slug}/`
+    };
+  })
+  .sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+---
+
+<BaseLayout title="Events | AWS UG AI/ML Kuala Lumpur">
+  <main class="section">
+    <div class="container">
+      <span class="eyebrow">Community Events</span>
+      <h1>Learn, build and connect.</h1>
+      <p class="intro">
+        Meetups, workshops and community-led events for AI/ML practitioners and enthusiasts in Kuala Lumpur.
+      </p>
+
+      <div class="grid-3 events">
+        {events.map(event => <EventCard {...event} />)}
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+h1 { max-width: 850px; margin: 12px 0; }
+.intro { max-width: 700px; font-size: 1.15rem; }
+.events { margin-top: 45px; }
+</style>

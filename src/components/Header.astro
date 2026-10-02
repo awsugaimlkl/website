@@ -1,0 +1,111 @@
+<header class="site-header">
+  <div class="container nav">
+    <a href="/" class="brand">
+      <img
+        class="brand-logo"
+        src="/assets/awsug-aiml-kl-logo.png"
+        alt="AWS User Group AI/ML Kuala Lumpur"
+        width="32"
+        height="32"
+      />
+      <span>
+        <strong>AWS UG AI/ML</strong>
+        <small>Kuala Lumpur</small>
+      </span>
+    </a>
+
+    <nav>
+      <a href="/#about">About</a>
+      <a href="/events/">Events</a>
+      <a href="/#community">Community</a>
+      <a href="/#gallery">Gallery</a>
+      <a
+        class="meetup"
+        href="https://www.meetup.com/awsug-aiml-my/"
+        target="_blank"
+        rel="noreferrer"
+      >
+        Join Meetup
+      </a>
+    </nav>
+  </div>
+</header>
+
+<style>
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(18px);
+  background: rgba(9,9,11,.78);
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+
+.nav {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand strong,
+.brand small {
+  display: block;
+}
+
+.brand strong {
+  font-size: .92rem;
+  line-height: 1.1;
+}
+
+.brand small {
+  color: #a1a1aa;
+  font-size: .72rem;
+  line-height: 1.1;
+  margin-top: 2px;
+}
+
+.brand-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+}
+
+nav {
+  display: flex;
+  gap: 26px;
+  align-items: center;
+  font-size: .92rem;
+}
+
+nav a:not(.meetup) {
+  color: #d4d4d8;
+}
+
+.meetup {
+  background: #ff9900;
+  color: #111;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 800;
+}
+
+@media (max-width: 760px) {
+  .brand-logo {
+    width: 28px;
+    height: 28px;
+  }
+
+  nav a:not(.meetup) {
+    display: none;
+  }
+}
+</style>

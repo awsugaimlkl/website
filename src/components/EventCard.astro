@@ -1,0 +1,52 @@
+---
+const { title, dateDisplay, venue, summary, href, featured = false } = Astro.props;
+---
+
+<a class:list={["event-card", "card", { featured }]} href={href}>
+  <span class="eyebrow">{featured ? "Featured Event" : "Community Event"}</span>
+  <h3>{title}</h3>
+  <div class="meta">{dateDisplay}</div>
+  <div class="venue">{venue}</div>
+  <p>{summary}</p>
+  <span class="more">View event →</span>
+</a>
+
+<style>
+.event-card {
+  padding: 26px;
+  display: block;
+  transition: .2s ease;
+}
+
+.event-card:hover {
+  transform: translateY(-4px);
+  border-color: #a855f7;
+}
+
+.event-card.featured {
+  background:
+    linear-gradient(145deg,rgba(255,153,0,.08),transparent 42%),
+    linear-gradient(315deg,rgba(168,85,247,.12),transparent 45%),
+    var(--surface);
+}
+
+h3 {
+  font-size: 1.55rem;
+  margin: 14px 0 18px;
+}
+
+.meta {
+  color: #fff;
+  font-weight: 750;
+}
+
+.venue {
+  color: #c4b5fd;
+  margin-top: 4px;
+}
+
+.more {
+  color: var(--orange);
+  font-weight: 750;
+}
+</style>

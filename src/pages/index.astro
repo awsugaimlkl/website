@@ -1,17 +1,404 @@
 ---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import EventCard from "../components/EventCard.astro";
 
+const modules = import.meta.glob("/src/pages/events/*.md", { eager: true });
+
+const events = Object.entries(modules)
+  .map(([path, mod]) => {
+    const slug = path.split("/").pop().replace(".md", "");
+    return { ...mod.frontmatter, href: `/events/${slug}/` };
+  })
+  .sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+const upcoming = events.filter(e => new Date(e.date) >= new Date());
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout>
+  <main>
+
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow">AWS User Group · Kuala Lumpur</span>
+          <h1>
+            Where <span class="gradient-text">AI/ML builders</span> connect.
+          </h1>
+
+          <p class="hero-copy">
+            A community for practitioners, developers, engineers, students and enthusiasts exploring artificial intelligence and machine learning on AWS.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="/events/">Explore events</a>
+            <a class="btn btn-secondary" href="https://www.meetup.com/awsug-aiml-my/" target="_blank">Join the community</a>
+          </div>
+
+          <div class="topics">
+            <span class="tag">Generative AI</span>
+            <span class="tag">Amazon Bedrock</span>
+            <span class="tag">Machine Learning</span>
+            <span class="tag">Agentic AI</span>
+            <span class="tag">MLOps</span>
+          </div>
+        </div>
+
+        <div class="visual">
+          <div class="logo-showcase">
+            <img
+              class="hero-logo"
+              src="/assets/awsug-aiml-kl-logo.png"
+              alt="AWS User Group AI/ML Kuala Lumpur"
+            />
+          </div>
+          <div class="orb orange"></div>
+          <div class="orb purple"></div>
+          <div class="orb teal"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="community-day section">
+      <div class="container event-highlight">
+        <div>
+          <span class="eyebrow">14 November 2026 · Sunway University</span>
+          <h2>AWS AI/ML<br/>Community Day 2026</h2>
+          <p>
+            Our first Community Day brings together the AWS AI/ML community for a full day of technical talks, demos, knowledge sharing and networking.
+          </p>
+          <a class="btn btn-primary" href="/events/community-day-2026/">Event details</a>
+        </div>
+
+        <div class="date-block">
+          <strong>14</strong>
+          <span>NOV</span>
+          <small>2026</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <div class="container">
+        <span class="eyebrow">About the community</span>
+        <h2>Built by the community,<br/>for the community.</h2>
+
+        <div class="grid-3 about-grid">
+          <article class="card accent-purple">
+            <span>01</span>
+            <h3>Learn</h3>
+            <p>Technical talks, workshops and demonstrations covering practical AI/ML technologies and AWS services.</p>
+          </article>
+
+          <article class="card accent-orange">
+            <span>02</span>
+            <h3>Share</h3>
+            <p>A platform for practitioners to share lessons, architectures, experiments and real-world experiences.</p>
+          </article>
+
+          <article class="card accent-teal">
+            <span>03</span>
+            <h3>Connect</h3>
+            <p>Meet engineers, data scientists, developers, architects, students and fellow technology enthusiasts.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section event-section">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">What's happening</span>
+            <h2>Upcoming events</h2>
+          </div>
+          <a href="/events/">View all events →</a>
+        </div>
+
+        <div class="grid-3">
+          {upcoming.slice(0,3).map(event => <EventCard {...event} />)}
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="community">
+      <div class="container">
+        <span class="eyebrow">Get involved</span>
+        <h2>Join the AWS AI/ML community.</h2>
+
+        <div class="social-grid">
+          <a class="social card meetup-card" href="https://www.meetup.com/awsug-aiml-my/" target="_blank">
+            <span>Meetup</span>
+            <strong>Attend our next event →</strong>
+          </a>
+
+          <a class="social card linkedin-card" href="https://www.linkedin.com/company/aws-user-groups-ai-ml-kuala-lumpur/" target="_blank">
+            <span>LinkedIn</span>
+            <strong>Follow community updates →</strong>
+          </a>
+
+          <a class="social card facebook-card" href="https://www.facebook.com/share/g/1JWLK8ykeb/?mibextid=wwXIfr" target="_blank">
+            <span>Facebook</span>
+            <strong>Join the discussion →</strong>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section gallery-section" id="gallery">
+      <div class="container">
+        <span class="eyebrow">Community moments</span>
+        <h2>Previous meetups</h2>
+
+        <div class="gallery-grid">
+          <a href="https://photos.app.goo.gl/13eRnUZjgnFzkSt69" target="_blank" class="gallery g1">
+            <span>Community Album 01</span>
+          </a>
+
+          <a href="https://photos.app.goo.gl/sdN9weecTJRPnyNw7" target="_blank" class="gallery g2">
+            <span>Community Album 02</span>
+          </a>
+
+          <a href="https://photos.app.goo.gl/5CeVYFS48nEERN578" target="_blank" class="gallery g3">
+            <span>Community Album 03</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</BaseLayout>
+
+<style>
+.hero {
+  min-height: 720px;
+  display: flex;
+  align-items: center;
+  padding: 100px 0;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  align-items: center;
+  gap: 70px;
+}
+
+.hero h1 {
+  max-width: 850px;
+  margin: 16px 0 26px;
+}
+
+.hero-copy {
+  max-width: 720px;
+  font-size: 1.2rem;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 36px;
+}
+
+.visual {
+  min-height: 420px;
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.logo-showcase {
+  position: relative;
+  z-index: 2;
+  width: min(420px, 90%);
+  display: grid;
+  place-items: center;
+  filter: drop-shadow(0 20px 45px rgba(168,85,247,.18));
+}
+
+.hero-logo {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(2px);
+}
+
+.orange {
+  width: 90px;
+  height: 90px;
+  background: rgba(255,153,0,.3);
+  top: 25px;
+  right: 15px;
+}
+
+.purple {
+  width: 145px;
+  height: 145px;
+  background: rgba(168,85,247,.2);
+  bottom: 10px;
+  left: -15px;
+}
+
+.teal {
+  width: 54px;
+  height: 54px;
+  background: rgba(45,212,191,.28);
+  bottom: 80px;
+  right: 5px;
+}
+
+.community-day {
+  padding-top: 20px;
+}
+
+.event-highlight {
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  padding: 55px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 50px;
+  background:
+    radial-gradient(circle at 90% 10%,rgba(255,153,0,.17),transparent 30%),
+    radial-gradient(circle at 15% 100%,rgba(168,85,247,.16),transparent 40%),
+    #121217;
+}
+
+.event-highlight h2 {
+  margin: 12px 0 22px;
+}
+
+.event-highlight p {
+  max-width: 700px;
+}
+
+.date-block {
+  width: 220px;
+  height: 220px;
+  border: 1px solid rgba(255,153,0,.45);
+  border-radius: 28px;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  background: rgba(255,153,0,.06);
+}
+
+.date-block strong {
+  color: var(--orange);
+  font-size: 5.6rem;
+  line-height: .8;
+}
+
+.date-block span {
+  font-size: 1.7rem;
+  letter-spacing: .25em;
+  margin-top: 14px;
+}
+
+.date-block small { color: var(--muted); }
+
+.about-grid { margin-top: 42px; }
+
+.about-grid article {
+  padding: 28px;
+  min-height: 260px;
+}
+
+.about-grid article > span {
+  font-weight: 900;
+  font-size: .8rem;
+}
+
+.about-grid h3 {
+  margin: 28px 0 12px;
+  font-size: 1.9rem;
+}
+
+.accent-purple { border-top: 3px solid var(--purple); }
+.accent-orange { border-top: 3px solid var(--orange); }
+.accent-teal { border-top: 3px solid var(--teal); }
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  margin-bottom: 32px;
+}
+
+.section-heading h2 { margin-bottom: 0; }
+.section-heading > a { color: var(--orange); }
+
+.social-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 18px;
+}
+
+.social {
+  padding: 28px;
+  min-height: 165px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: .2s ease;
+}
+
+.social:hover { transform: translateY(-4px); }
+
+.social span { color: var(--muted); }
+.social strong { font-size: 1.15rem; }
+
+.meetup-card { border-bottom: 3px solid var(--orange); }
+.linkedin-card { border-bottom: 3px solid var(--purple); }
+.facebook-card { border-bottom: 3px solid var(--teal); }
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 18px;
+  margin-top: 36px;
+}
+
+.gallery {
+  height: 280px;
+  border-radius: 22px;
+  border: 1px solid var(--border);
+  padding: 24px;
+  display: flex;
+  align-items: end;
+  font-weight: 800;
+  transition: .2s ease;
+}
+
+.gallery:hover { transform: translateY(-4px); }
+
+.g1 { background: linear-gradient(145deg,#2e1065,#18181b 65%); }
+.g2 { background: linear-gradient(145deg,#78350f,#18181b 65%); }
+.g3 { background: linear-gradient(145deg,#134e4a,#18181b 65%); }
+
+@media(max-width:850px) {
+  .hero { min-height: auto; padding-top: 70px; }
+  .hero-grid { grid-template-columns: 1fr; }
+  .visual { min-height: 340px; }
+  .logo-showcase { width: min(300px, 82%); }
+  .event-highlight { grid-template-columns:1fr; padding:30px; }
+  .date-block { width:100%; height:170px; }
+  .social-grid,
+  .gallery-grid { grid-template-columns:1fr; }
+  .gallery { height:180px; }
+  .section-heading { align-items:start; flex-direction:column; gap:10px; }
+}
+</style>
