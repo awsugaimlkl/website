@@ -71,6 +71,8 @@ talks:
 
 Text below the second `---` is the body of the page and is written in Markdown.
 
+Add the `talks` after every meetup. The card on the events list links with "See what was covered" once the talks are listed, and with "View meetup details" until then. `signups` is the number Meetup shows as attendees, which counts sign-ups, so the site says "signed up on Meetup".
+
 An event is listed as upcoming until the end of its day in Malaysia time. The home page highlights the next upcoming event that has `featured: true`, or simply the next one. Remember to update the meetup count in the "facts" block on the home page.
 
 ## Update the Community Day page
@@ -83,7 +85,7 @@ Everything on the page comes from the top of `src/pages/events/community-day-202
 - **Schedule.** `agenda` has one entry per slot with `time`, `title` and, for a talk, `speaker`. It starts as a placeholder outline: an entry with `placeholder: true` is marked "To be announced". Replace the outline with the real slots when the agenda is set, and remove `agendaNote`, the line that tells visitors it is an outline.
 - **Registration.** Add `registrationUrl` and a Register button appears at the top of the page and in the Registration section.
 - **Sponsors and partners.** Add an entry under `sponsors` with `name`, `tier`, `url` and `logo`. Entries with the same `tier` are grouped under one heading. Logos go in `src/assets/sponsors/`.
-- **Countdown.** It runs to `startTime` on `date`, in Malaysia time, and disappears once the event starts.
+- **Countdown.** It runs to `startTime` on `date`, in Malaysia time. Between `startTime` and `endTime` it reads "Happening now", and after `endTime` it disappears and the label above the title changes to "Past event". The numbers are added by `public/scripts/site.js` and are not written in the page itself, so search engines and tools that do not run scripts never see a row of zeros.
 - **Venue.** `venueNote` and `gettingThere` hold the room note and the travel directions.
 
 The organizing team on the page is the same list as the home page, from `src/lib/team.js`. If the date or time changes, update `public/community-day-2026.ics` as well, which is the file behind the "Add to calendar" button.

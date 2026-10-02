@@ -23,6 +23,7 @@ const {
   dateDisplay,
   time,
   startTime,
+  endTime,
   venue,
   address,
   mapUrl,
@@ -50,8 +51,9 @@ const eventData = eventStructuredData(frontmatter, pageUrl, Astro.site);
 // Empty profiles shown until every speaker slot has a name in it.
 const openSlots = past ? 0 : Math.max(0, speakerSlots - speakers.length);
 
-// The moment the countdown runs to, in Malaysia time.
+// The moment the countdown runs to, and the moment the event ends, in Malaysia time.
 const startsAt = startTime ? `${date}T${startTime}:00+08:00` : null;
+const endsAt = endTime ? `${date}T${endTime}:00+08:00` : null;
 
 // Sponsor logos live in src/assets/sponsors. A sponsor without a logo file is shown by name.
 const logoFiles = import.meta.glob("/src/assets/sponsors/*.{png,jpg,jpeg,webp,svg}", { eager: true });
@@ -85,7 +87,14 @@ const sections = [
   <main id="main">
     <section class="hero">
       <div class="container">
-        <span class="eyebrow" data-event-date={date} data-past-label="Past event">
+        <span
+          class="eyebrow"
+          data-event-date={date}
+          data-event-start={startsAt}
+          data-event-end={endsAt}
+          data-live-label="Today"
+          data-past-label="Past event"
+        >
           {past ? "Past event" : "Upcoming event"}
         </span>
         <h1 class="gradient-text">{title}</h1>
@@ -107,16 +116,14 @@ const sections = [
             </div>
           </dl>
 
-          {/* Filled in and started by public/scripts/site.js. Hidden once the event starts. */}
+          {/*
+            The numbers are added by public/scripts/site.js. Nothing is written here on purpose:
+            a search engine or tool that reads the page without running scripts would otherwise
+            see a row of zeros. While the event is on it reads "Happening now", then it is removed.
+          */}
           {!past && startsAt && (
-            <div class="countdown" data-countdown={startsAt}>
+            <div class="countdown" data-countdown={startsAt} data-countdown-end={endsAt}>
               <p class="sr-only" data-countdown-summary></p>
-              <div class="cells" aria-hidden="true">
-                <div><strong class="days" data-unit="days">00</strong><span>days</span></div>
-                <div><strong data-unit="hours">00</strong><span>hours</span></div>
-                <div><strong data-unit="minutes">00</strong><span>minutes</span></div>
-                <div><strong data-unit="seconds">00</strong><span>seconds</span></div>
-              </div>
             </div>
           )}
         </div>
@@ -245,7 +252,7 @@ const sections = [
                 <li class:list={{ open: item.placeholder }}>
                   <span class="slot">{item.time}</span>
                   <div>
-                    <strong>{item.title}</strong>
+                    <strong>{item.title}</strong>{" "}
                     {item.placeholder && <span class="tag">To be announced</span>}
                     {item.speaker && <span class="by">{item.speaker}</span>}
                   </div>
@@ -375,6 +382,8 @@ const sections = [
       <div class="container">
         <h2 id="team-heading">Organizing team</h2>
         <div class="body">
+          <p class="note">Community Day is organized by the group's User Group Leaders.</p>
+
           <div class="team-grid">
             {TEAM.map((member) => <TeamMember {...member} />)}
           </div>
@@ -447,9 +456,12 @@ const sections = [
   font-size: 1.2rem;
 }
 
+/* The size is fixed so the page does not jump when the script adds the numbers */
 .countdown {
   border-left: 1px solid var(--border);
   display: grid;
+  min-width: 416px;
+  min-height: 97px;
 }
 
 /* Stays invisible until the script has put real numbers in */
@@ -462,12 +474,13 @@ const sections = [
   .countdown { display: none; }
 }
 
-.cells {
+/* The cells are created by the script, so these rules are written as :global to reach them */
+.countdown :global(.cells) {
   display: grid;
   grid-template-columns: repeat(4, 104px);
 }
 
-.cells > div {
+.countdown :global(.cells > div) {
   padding: 20px 6px 18px;
   text-align: center;
   display: grid;
@@ -475,11 +488,11 @@ const sections = [
   gap: 8px;
 }
 
-.cells > div + div {
+.countdown :global(.cells > div + div) {
   border-left: 1px solid var(--border);
 }
 
-.cells strong {
+.countdown :global(.cells strong) {
   font-size: 2.7rem;
   font-weight: 800;
   line-height: 1;
@@ -487,13 +500,24 @@ const sections = [
   font-variant-numeric: tabular-nums;
 }
 
-.cells .days {
+.countdown :global(.cells .days) {
   color: var(--orange);
 }
 
-.cells span {
+.countdown :global(.cells span) {
   color: var(--muted);
   font-size: .84rem;
+}
+
+/* Shown in place of the numbers while the event is on */
+.countdown :global(.now) {
+  margin: 0;
+  align-self: center;
+  justify-self: center;
+  color: var(--orange);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
 }
 
 /* ---------- Menu of sections ---------- */
@@ -809,7 +833,7 @@ const sections = [
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
-  margin-bottom: 26px;
+  margin: 22px 0 26px;
 }
 
 .back {
@@ -868,13 +892,15 @@ const sections = [
   .countdown {
     border-left: 0;
     border-top: 1px solid var(--border);
+    min-width: 0;
+    min-height: 86px;
   }
 
-  .cells { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .countdown :global(.cells) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 
-  .cells strong { font-size: 2.1rem; }
+  .countdown :global(.cells strong) { font-size: 2.1rem; }
 
-  .cells > div { padding: 16px 4px 14px; }
+  .countdown :global(.cells > div) { padding: 16px 4px 14px; }
 
   .highlights,
   .speaker-grid,

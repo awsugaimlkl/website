@@ -10,12 +10,16 @@ const {
   featured = false,
   number,
   signups,
+  talks = [],
 } = Astro.props;
 
 const label = past
   ? number ? `Meetup #${number}` : "Past event"
   : featured ? "Featured event" : "Upcoming event";
 const pastLabel = number ? `Meetup #${number}` : "Past event";
+
+// Only promise a recap when the page lists the talks.
+const linkText = !past ? "View event" : talks.length > 0 ? "See what was covered" : "View meetup details";
 ---
 
 <a class:list={["event-card", "card", { featured: featured && !past }]} href={href}>
@@ -24,8 +28,8 @@ const pastLabel = number ? `Meetup #${number}` : "Past event";
   <div class="meta">{dateDisplay}</div>
   <div class="venue">{venue}</div>
   <p>{summary}</p>
-  {signups && <p class="signups">{signups} signed up</p>}
-  <span class="more">{past ? "See what was covered" : "View event"}</span>
+  {signups && <p class="signups">{signups} signed up on Meetup</p>}
+  <span class="more">{linkText}</span>
 </a>
 
 <style>
