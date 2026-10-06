@@ -10,6 +10,9 @@ export const SITE = {
   facebook: "https://www.facebook.com/share/g/1JWLK8ykeb/?mibextid=wwXIfr",
   // Google Analytics measurement ID. Set to "" to switch tracking off.
   googleAnalyticsId: "G-NY3PKDFBWZ",
+  // Google Search Console verification code. It has to stay on the site for
+  // the property to remain verified. Set to "" to remove the tag.
+  googleSiteVerification: "8Lzq4bEtFTMX0cby080QDJUswR7oWZchP0oZn5pMoR4",
   // The event that gets its own button in the menu at the top of every page.
   // The button disappears by itself once the date has passed.
   // Replace with `highlight: null,` to remove it sooner.

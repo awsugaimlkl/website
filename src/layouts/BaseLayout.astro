@@ -25,6 +25,10 @@ const imageUrl = new URL(image, Astro.site);
   <title>{title}</title>
   <meta name="description" content={description} />
   <meta name="theme-color" content="#09090b" />
+  {/* Google Search Console ownership check. The code is set in src/lib/site.js. */}
+  {SITE.googleSiteVerification && (
+    <meta name="google-site-verification" content={SITE.googleSiteVerification} />
+  )}
   {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
 
   <meta property="og:type" content="website" />
