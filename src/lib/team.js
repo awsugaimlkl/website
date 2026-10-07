@@ -19,11 +19,4 @@ export const TEAM = [
     initials: "SK",
     photo: "spyros-kyriazatis",
   },
-  {
-    name: "Hong Wei Chin",
-    role: "User Group Leader",
-    linkedin: "https://www.linkedin.com/in/johnson-chin1009/",
-    initials: "HC",
-    photo: "hong-wei-chin",
-  },
 ];
