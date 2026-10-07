@@ -31,6 +31,7 @@ const {
   gettingThere = [],
   registrationUrl,
   callForSpeakersUrl,
+  banner,
   calendarFile,
   highlights = [],
   topics = [],
@@ -54,6 +55,11 @@ const openSlots = past ? 0 : Math.max(0, speakerSlots - speakers.length);
 // The moment the countdown runs to, and the moment the event ends, in Malaysia time.
 const startsAt = startTime ? `${date}T${startTime}:00+08:00` : null;
 const endsAt = endTime ? `${date}T${endTime}:00+08:00` : null;
+
+// The banner across the top of the page. It comes down after its "until" day,
+// or after the event when no day is given.
+const bannerUntil = banner?.until ?? date;
+const showBanner = Boolean(banner?.text) && !isPast(bannerUntil);
 
 // Sponsor logos live in src/assets/sponsors. A sponsor without a logo file is shown by name.
 const logoFiles = import.meta.glob("/src/assets/sponsors/*.{png,jpg,jpeg,webp,svg}", { eager: true });
@@ -85,6 +91,20 @@ const sections = [
   <script slot="head" type="application/ld+json" set:html={JSON.stringify(eventData)} />
 
   <main id="main">
+    {/* Set by "banner" in the event's .md file. public/scripts/site.js hides it once its day has passed. */}
+    {showBanner && (
+      <aside class="announce" aria-label="Announcement" data-event-date={bannerUntil} data-hide-when-past>
+        <div class="container">
+          <p>{banner.text}</p>
+          {banner.url && (
+            <a href={banner.url} target="_blank" rel="noopener noreferrer">
+              {banner.linkText ?? "Find out more"}
+            </a>
+          )}
+        </div>
+      </aside>
+    )}
+
     <section class="hero">
       <div class="container">
         <span
@@ -408,6 +428,53 @@ const sections = [
 </BaseLayout>
 
 <style>
+/* ---------- Banner across the top of the page ---------- */
+
+.announce {
+  background: var(--orange);
+  color: #111;
+}
+
+.announce .container {
+  padding: 10px 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 18px;
+  text-align: center;
+}
+
+.announce p {
+  margin: 0;
+  color: inherit;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.announce a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 18px;
+  border-radius: 999px;
+  background: #111;
+  color: #fff;
+  font-size: .93rem;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.announce a:hover {
+  background: #2a2a31;
+}
+
+/* The usual orange outline would not show on an orange bar */
+.announce a:focus-visible {
+  outline-color: #111;
+  border-radius: 999px;
+}
+
 /* ---------- Hero ---------- */
 
 .hero {

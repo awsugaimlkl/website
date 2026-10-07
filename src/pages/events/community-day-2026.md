@@ -17,6 +17,13 @@ photo: "2026-05-meetup-wide"
 photoAlt: "A speaker presents to a full room of attendees under hexagon-shaped ceiling lights"
 photoCaption: "Our May 2026 meetup at Xendit Malaysia."
 
+# Banner across the top of the page. Put a # in front of these lines to take it down.
+# To have it come down by itself, add a last day to show it:   until: "2026-10-31"
+banner:
+  text: "Call for Talk Proposal Submission is now Open"
+  linkText: "Submit your proposal"
+  url: "https://forms.gle/DRJL2fS7ZxrTJWgN6"
+
 # Call for speakers. While this line is here, the page shows "Apply to speak" buttons.
 # Put a # in front of it when the call closes.
 callForSpeakersUrl: "https://forms.gle/Uf1Hd2cmpmfuyzK88"

@@ -79,6 +79,7 @@ An event is listed as upcoming until the end of its day in Malaysia time. The ho
 
 Everything on the page comes from the top of `src/pages/events/community-day-2026.md`. The file has a commented example for each list, so remove the `#` signs and fill in the details.
 
+- **Banner.** `banner` is the orange strip across the top of the page: `text` is the message, and `url` and `linkText` are the button next to it. Put a `#` in front of its lines to take it down, or add `until: "2026-10-31"` and it comes down by itself after that day. It also disappears once the event is over.
 - **Call for speakers.** `callForSpeakersUrl` is the application form. While the line is there, the page shows "Apply to speak" buttons. Put a `#` in front of it when the call closes.
 - **Speakers.** Add an entry under `speakers` with `name`, `role`, `talk`, `linkedin` and `photo`. Photos go in `src/assets/speakers/`. A speaker without a photo is shown with their initials.
 - **Speaker placeholders.** `speakerSlots` is how many profiles the page shows. Slots without a speaker yet are shown as "Speaker to be announced", and each speaker you add takes one over. Set it to `0` to show only confirmed speakers.
