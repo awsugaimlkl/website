@@ -1,6 +1,6 @@
 ---
 layout: ../../layouts/CommunityDayLayout.astro
-title: "AWS AI/ML Community Day 2026"
+title: "AWS Community Day AI/ML Edition 2026"
 description: "A community-led day for AI/ML builders, practitioners, students and technology leaders to learn, share and connect."
 date: "2026-11-14"
 dateDisplay: "Saturday, 14 November 2026"
@@ -12,7 +12,7 @@ address: "No. 5, Jalan Universiti, Bandar Sunway, 47500 Selangor, Malaysia"
 mapUrl: "https://www.google.com/maps/search/?api=1&query=Sunway+University"
 calendarFile: "/community-day-2026.ics"
 featured: true
-summary: "The first AWS AI/ML Community Day organized by AWS User Group AI/ML Kuala Lumpur."
+summary: "The first AWS Community Day AI/ML Edition organized by AWS User Group AI/ML Kuala Lumpur."
 photo: "2026-05-meetup-wide"
 photoAlt: "A speaker presents to a full room of attendees under hexagon-shaped ceiling lights"
 photoCaption: "Our May 2026 meetup at Xendit Malaysia."
@@ -107,6 +107,6 @@ gettingThere:
     text: "A covered, elevated walkway links the campus to the rest of Bandar Sunway."
 ---
 
-AWS AI/ML Community Day 2026 brings together the local artificial intelligence, machine learning and cloud community for a full day of technical talks, practical demonstrations, community sharing and networking.
+AWS Community Day AI/ML Edition 2026 brings together the local artificial intelligence, machine learning and cloud community for a full day of technical talks, practical demonstrations, community sharing and networking.
 
 This is the first Community Day organized by AWS User Group AI/ML Kuala Lumpur. AWS Community Days are planned and delivered by user groups, and the talks come from people who use AWS in their daily work.
