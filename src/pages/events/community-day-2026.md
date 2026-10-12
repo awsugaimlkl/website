@@ -91,11 +91,16 @@ agenda:
 
 # Sponsors and partners. Entries with the same tier are grouped under one heading.
 # logo is a file name in src/assets/sponsors without the extension; leave it out to show the name.
-# sponsors:
+# Example:
 #   - name: "Company name"
 #     tier: "Gold sponsor"
 #     url: "https://..."
 #     logo: "company-name"
+sponsors:
+  - name: "Konfx"
+    tier: "Official sponsor"
+    url: "https://www.konfx.io/"
+    logo: "konfx"
 
 venueNote: "The building and room will be confirmed closer to the event."
 gettingThere:
