@@ -4,7 +4,7 @@
 import { SITE } from "./site.js";
 
 export function eventStructuredData(frontmatter, pageUrl, site) {
-  const { title, description, date, startTime, endTime, venue, address, sponsors = [] } = frontmatter;
+  const { title, description, date, startTime, endTime, venue, address, sponsors = [], speakers = [] } = frontmatter;
 
   return {
     "@context": "https://schema.org",
@@ -27,6 +27,17 @@ export function eventStructuredData(frontmatter, pageUrl, site) {
       name: SITE.name,
       url: site,
     },
+    ...(speakers.length > 0
+      ? {
+          performer: speakers.map((s) => ({
+            "@type": "Person",
+            name: s.name,
+            ...(s.role ? { jobTitle: s.role } : {}),
+            ...(s.affiliation ? { affiliation: { "@type": "Organization", name: s.affiliation } } : {}),
+            ...(s.linkedin ? { sameAs: s.linkedin } : {}),
+          })),
+        }
+      : {}),
     ...(sponsors.length > 0
       ? {
           sponsor: sponsors.map((s) => ({

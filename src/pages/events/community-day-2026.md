@@ -55,14 +55,34 @@ highlights:
 # yet are shown as "Speaker to be announced". Set it to 0 to show only confirmed speakers.
 speakerSlots: 6
 
-# Remove the # signs and add one entry per speaker.
+# One entry per speaker, shown in this order.
 # photo is a file name in src/assets/speakers without the extension; leave it out to show initials.
-# speakers:
+# Example:
 #   - name: "Full name"
-#     role: "Job title, Company"
+#     role: "Job title"
+#     affiliation: "Company or university"
 #     talk: "Talk title"
 #     linkedin: "https://www.linkedin.com/in/..."
 #     photo: "full-name"
+speakers:
+  - name: "Mohanahari Mohan"
+    role: "Platform Engineer"
+    affiliation: "Maybank"
+    talk: "AI-Powered API Discovery, the Road to AGI, and Quantum Computing on AWS"
+    linkedin: "https://www.linkedin.com/in/czhari/"
+    photo: "mohanahari-mohan"   # shows initials until src/assets/speakers/mohanahari-mohan.jpg is added
+  - name: "Mirza Rayana Sanzana"
+    role: "Applied AI Researcher and Lecturer"
+    affiliation: "Monash University"
+    talk: "Your Model Worked Yesterday: Detecting ML Drift with Amazon SageMaker AI"
+    linkedin: "https://www.linkedin.com/in/mirza-rayana-sanzana"
+    photo: "mirza-rayana-sanzana"
+  - name: "Weiyuan Liu"
+    role: "Director of Engineering"
+    affiliation: "Ascenda"
+    talk: "AWS DevOps Agent, more than just another AI tool"
+    linkedin: "https://www.linkedin.com/in/liuweiyuan/"
+    photo: "weiyuan-liu"
 
 # Schedule. One entry per slot, in order. This is a placeholder outline: replace it with
 # the real slots when the agenda is set, and remove agendaNote at the same time.
