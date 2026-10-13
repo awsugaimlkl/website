@@ -131,17 +131,31 @@ sponsors:
 # Volunteer team, the last section on the page. volunteerSlots is how many tiles it shows.
 # Tiles without a volunteer yet read "Volunteer to be announced". Set it to 0 to show only
 # named volunteers; with 0 and no volunteers the section is left out.
-volunteerSlots: 8
+volunteerSlots: 0
 
 # One entry per volunteer, shown in this order. linkedin is optional.
-# photo is a file name in src/assets/volunteers without the extension. A PNG with the
-# background removed stands in front of the purple V; a JPG fills the whole tile.
-# Photos are shown in black and white. Without a photo the tile shows initials.
+# photo is a file name in src/assets/volunteers without the extension: a finished tile
+# made with tools/volunteer-tiles (the person in black and white on the skyline).
+# Without a photo, the tile shows the skyline silhouette above the name.
 # Example:
 #   - name: "Full name"
 #     photo: "full-name"
 #     linkedin: "https://www.linkedin.com/in/..."
-# volunteers:
+volunteers:
+  - name: "Tuan Nur Sumayyah Binti Roseli"
+    photo: "tuan-nur-sumayyah"
+  - name: "Fatin Najdah"
+    photo: "fatin-najdah"
+  - name: "Ruben Chong"
+    photo: "ruben-chong"
+  - name: "Yap Hock Seng"
+    photo: "yap-hock-seng"
+  - name: "Chan Kar Fong"
+    photo: "chan-kar-fong"
+  - name: "Chong Hun Yee"
+    photo: "chong-hun-yee"
+  - name: "Jerry Chong"
+    photo: "jerry-chong"
 
 venueNote: "The building and room will be confirmed closer to the event."
 gettingThere:

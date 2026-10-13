@@ -2,14 +2,14 @@
 import { Image } from "astro:assets";
 import placeholderArt from "../assets/volunteer-placeholder.jpg";
 
-// One tile in the Community Day "Volunteer Team" grid: a purple V behind a
-// black-and-white photo, with the name underneath.
-// placeholder: an empty tile for a volunteer who has not been named yet. It shows
-// the illustration in src/assets/volunteer-placeholder.jpg (a silhouette in front
-// of the Kuala Lumpur skyline) instead of the V.
+// One tile in the Community Day "Volunteer Team" grid, with the name underneath.
 //
-// Photos live in src/assets/volunteers. A PNG or WebP with the background
-// removed sits in front of the V, like a cut-out. A JPG fills the whole tile.
+// A volunteer's photo is a finished square tile, made with tools/volunteer-tiles:
+// the person cut out, in black and white, in front of the Kuala Lumpur skyline.
+// It is shown as it is. A volunteer whose photo has not arrived yet, and an
+// empty tile (placeholder), show the skyline with the silhouette instead.
+//
+// placeholder: an empty tile for a volunteer who has not been named yet.
 // extra: a placeholder left out on phones, so the two-column grid ends on a full row
 // and the page does not fill with empty tiles.
 const { name = "", photo, linkedin, placeholder = false, extra = false } = Astro.props;
@@ -20,50 +20,23 @@ const match = photo
       ([path]) => path.split("/").pop().replace(/\.[^.]+$/, "") === photo
     )
   : null;
-const image = match ? match[1].default : null;
-const cutout = match ? /\.(png|webp)$/i.test(match[0]) : false;
+const image = match ? match[1].default : placeholderArt;
 
-const initials = name
-  .split(/\s+/)
-  .filter(Boolean)
-  .slice(0, 2)
-  .map((word) => word[0].toUpperCase())
-  .join("");
-
-// Never ask for a size larger than the photo itself.
-const maxWidth = image ? Math.min(560, image.width) : 0;
+// Never ask for a size larger than the image itself.
+const maxWidth = Math.min(560, image.width);
 const widths = [...new Set([280, maxWidth].filter((w) => w <= maxWidth))];
 ---
 
 <article class:list={["volunteer", { empty: placeholder, extra }]} aria-hidden={placeholder ? "true" : undefined}>
   <div class="tile">
-    {!placeholder && (
-      <svg class="v" viewBox="0 0 100 86" preserveAspectRatio="none" aria-hidden="true">
-        <polygon points="9,0 30,0 50,58 70,0 91,0 61,86 39,86" />
-      </svg>
-    )}
-
-    {placeholder ? (
-      <Image
-        class="art"
-        src={placeholderArt}
-        alt=""
-        width={560}
-        widths={[280, 560]}
-        sizes="(max-width: 760px) 50vw, 220px"
-      />
-    ) : image ? (
-      <Image
-        class:list={["photo", cutout ? "cutout" : "fill"]}
-        src={image}
-        alt=""
-        width={maxWidth}
-        widths={widths}
-        sizes="(max-width: 760px) 50vw, 220px"
-      />
-    ) : (
-      <span class="initials" aria-hidden="true">{initials}</span>
-    )}
+    <Image
+      class="art"
+      src={image}
+      alt=""
+      width={maxWidth}
+      widths={widths}
+      sizes="(max-width: 760px) 50vw, 220px"
+    />
   </div>
 
   {placeholder ? (
@@ -85,70 +58,14 @@ const widths = [...new Set([280, maxWidth].filter((w) => w <= maxWidth))];
   min-width: 0;
 }
 
-/* Dark at the top, deep purple at the bottom, with the V on top of that */
 .tile {
   position: relative;
   aspect-ratio: 7 / 6;
   overflow: hidden;
   border-radius: 4px;
-  background: linear-gradient(180deg, #0b0b16 0%, #0b0b16 42%, #2a1063 100%);
+  background: #0b0b2e;
 }
 
-.v {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.v polygon {
-  fill: #7c5cbf;
-}
-
-/* A cut-out photo stands in front of the V, feet on the bottom edge */
-.photo {
-  position: absolute;
-  display: block;
-  filter: grayscale(1) contrast(1.05);
-}
-
-.cutout {
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 88%;
-  object-fit: cover;
-  object-position: center top;
-}
-
-/* A photo with its own background fills the tile */
-.fill {
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 30%;
-}
-
-.initials {
-  position: absolute;
-  left: 50%;
-  bottom: 14%;
-  transform: translateX(-50%);
-  display: grid;
-  place-items: center;
-  width: 42%;
-  aspect-ratio: 1;
-  border-radius: 999px;
-  background: #18181f;
-  border: 2px solid #3f3f46;
-  color: #e4e4e7;
-  font-size: clamp(1.2rem, 2.4vw, 1.8rem);
-  font-weight: 800;
-  letter-spacing: -.03em;
-}
-
-/* An unnamed volunteer: the placeholder illustration fills the tile, in colour */
 .art {
   position: absolute;
   inset: 0;
