@@ -70,7 +70,7 @@ speakers:
     affiliation: "Maybank"
     talk: "AI-Powered API Discovery, the Road to AGI, and Quantum Computing on AWS"
     linkedin: "https://www.linkedin.com/in/czhari/"
-    photo: "mohanahari-mohan"   # shows initials until src/assets/speakers/mohanahari-mohan.jpg is added
+    photo: "mohanahari-mohan"
   - name: "Mirza Rayana Sanzana"
     role: "Applied AI Researcher and Lecturer"
     affiliation: "Monash University"
@@ -121,6 +121,21 @@ sponsors:
     tier: "Official sponsor"
     url: "https://www.konfx.io/"
     logo: "konfx"
+
+# Volunteer team, the last section on the page. volunteerSlots is how many tiles it shows.
+# Tiles without a volunteer yet read "Volunteer to be announced". Set it to 0 to show only
+# named volunteers; with 0 and no volunteers the section is left out.
+volunteerSlots: 8
+
+# One entry per volunteer, shown in this order. linkedin is optional.
+# photo is a file name in src/assets/volunteers without the extension. A PNG with the
+# background removed stands in front of the purple V; a JPG fills the whole tile.
+# Photos are shown in black and white. Without a photo the tile shows initials.
+# Example:
+#   - name: "Full name"
+#     photo: "full-name"
+#     linkedin: "https://www.linkedin.com/in/..."
+# volunteers:
 
 venueNote: "The building and room will be confirmed closer to the event."
 gettingThere:

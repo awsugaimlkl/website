@@ -31,6 +31,7 @@ src/assets/photos/               Event photos. Astro resizes and compresses them
 src/assets/team/                 Team photos, one per person
 src/assets/speakers/             Speaker photos for Community Day
 src/assets/sponsors/             Sponsor and partner logos for Community Day
+src/assets/volunteers/           Volunteer photos for Community Day
 public/                          Files copied as they are: favicons, og.png, _headers, _redirects
 ```
 
@@ -84,6 +85,7 @@ Everything on the page comes from the top of `src/pages/events/community-day-202
 - **Speakers.** Add an entry under `speakers` with `name`, `role` (job title), `affiliation` (company or university), `talk`, `linkedin` and `photo`. Speakers are shown in the order they are listed. Photos go in `src/assets/speakers/`. A speaker without a photo, or whose photo file is not there yet, is shown with their initials.
 - **Speaker placeholders.** `speakerSlots` is how many profiles the page shows. Slots without a speaker yet are shown as "Speaker to be announced", and each speaker you add takes one over. Set it to `0` to show only confirmed speakers.
 - **Schedule.** `agenda` has one entry per slot with `time`, `title` and, for a talk, `speaker`. It starts as a placeholder outline: an entry with `placeholder: true` is marked "To be announced". Replace the outline with the real slots when the agenda is set, and remove `agendaNote`, the line that tells visitors it is an outline.
+- **Volunteer team.** The last section on the page. `volunteerSlots` is how many tiles it shows; tiles without a volunteer yet read "Volunteer to be announced". Add an entry under `volunteers` with `name`, `photo` and, if you like, `linkedin`. Photos go in `src/assets/volunteers/` and are shown in black and white. A PNG with the background removed stands in front of the purple V; a JPG fills the tile. Set `volunteerSlots` to `0` to show only named volunteers.
 - **Registration.** Add `registrationUrl` and a Register button appears at the top of the page and in the Registration section.
 - **Sponsors and partners.** Add an entry under `sponsors` with `name`, `tier`, `url` and `logo`. Entries with the same `tier` are grouped under one heading. Logos go in `src/assets/sponsors/`.
 - **Countdown.** It runs to `startTime` on `date`, in Malaysia time. Between `startTime` and `endTime` it reads "Happening now", and after `endTime` it disappears and the label above the title changes to "Past event". The numbers are added by `public/scripts/site.js` and are not written in the page itself, so search engines and tools that do not run scripts never see a row of zeros.
