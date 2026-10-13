@@ -1,9 +1,12 @@
 ---
 import { Image } from "astro:assets";
+import placeholderArt from "../assets/volunteer-placeholder.jpg";
 
 // One tile in the Community Day "Volunteer Team" grid: a purple V behind a
 // black-and-white photo, with the name underneath.
-// placeholder: an empty tile for a volunteer who has not been named yet.
+// placeholder: an empty tile for a volunteer who has not been named yet. It shows
+// the illustration in src/assets/volunteer-placeholder.jpg (a silhouette in front
+// of the Kuala Lumpur skyline) instead of the V.
 //
 // Photos live in src/assets/volunteers. A PNG or WebP with the background
 // removed sits in front of the V, like a cut-out. A JPG fills the whole tile.
@@ -34,16 +37,21 @@ const widths = [...new Set([280, maxWidth].filter((w) => w <= maxWidth))];
 
 <article class:list={["volunteer", { empty: placeholder, extra }]} aria-hidden={placeholder ? "true" : undefined}>
   <div class="tile">
-    <svg class="v" viewBox="0 0 100 86" preserveAspectRatio="none" aria-hidden="true">
-      <polygon points="9,0 30,0 50,58 70,0 91,0 61,86 39,86" />
-    </svg>
+    {!placeholder && (
+      <svg class="v" viewBox="0 0 100 86" preserveAspectRatio="none" aria-hidden="true">
+        <polygon points="9,0 30,0 50,58 70,0 91,0 61,86 39,86" />
+      </svg>
+    )}
 
     {placeholder ? (
-      <svg class="figure" viewBox="0 0 100 86" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
-        <ellipse cx="50" cy="37" rx="13" ry="15" />
-        <path d="M44 47h12v12H44z" />
-        <path d="M12 86c0-18 14-30 38-30s38 12 38 30z" />
-      </svg>
+      <Image
+        class="art"
+        src={placeholderArt}
+        alt=""
+        width={560}
+        widths={[280, 560]}
+        sizes="(max-width: 760px) 50vw, 220px"
+      />
     ) : image ? (
       <Image
         class:list={["photo", cutout ? "cutout" : "fill"]}
@@ -140,13 +148,15 @@ const widths = [...new Set([280, maxWidth].filter((w) => w <= maxWidth))];
   letter-spacing: -.03em;
 }
 
-/* An unnamed volunteer: a grey figure where the photo will go */
-.figure {
+/* An unnamed volunteer: the placeholder illustration fills the tile, in colour */
+.art {
   position: absolute;
   inset: 0;
+  display: block;
   width: 100%;
   height: 100%;
-  fill: #34343e;
+  object-fit: cover;
+  object-position: center 40%;
 }
 
 .name {
