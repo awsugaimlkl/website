@@ -83,6 +83,12 @@ speakers:
     talk: "AWS DevOps Agent, more than just another AI tool"
     linkedin: "https://www.linkedin.com/in/liuweiyuan/"
     photo: "weiyuan-liu"
+  - name: "Shah Hassan"
+    role: "Head of Engineering"
+    affiliation: "NTT Data eCommerce Solutions Sdn Bhd"
+    talk: "Can AI Stop Bad Code and Investigate Production Incidents? : From Code Review to Platform Intelligence with Kiro & AWS"
+    linkedin: "https://www.linkedin.com/in/tsshahhassan"
+    photo: "shah-hassan"
 
 # Schedule. One entry per slot, in order. This is a placeholder outline: replace it with
 # the real slots when the agenda is set, and remove agendaNote at the same time.
