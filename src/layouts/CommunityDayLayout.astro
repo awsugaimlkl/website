@@ -360,20 +360,23 @@ const sections = [
             </div>
           ))}
 
+          {/* Kept apart from the sponsor tiers, under its own heading, so the invitation
+              never reads as part of a confirmed sponsor's listing. */}
           {!past && (
-            <Fragment>
+            <div class:list={["opportunities", { "after-tiers": tiers.length > 0 }]}>
+              <h3>Sponsorship opportunities</h3>
               <p class="note">
                 {sponsors.length > 0
-                  ? "There is still room for more sponsors and community partners."
+                  ? "There is room for more sponsors and community partners."
                   : "We are looking for sponsors and community partners."}
                 {" "}Support the day and meet the people building AI on AWS in Malaysia.
               </p>
               <div class="actions">
                 <a class="btn btn-secondary" href={SITE.linkedin} target="_blank" rel="noopener noreferrer">
-                  Message us on LinkedIn
+                  Ask about sponsoring on LinkedIn
                 </a>
               </div>
-            </Fragment>
+            </div>
           )}
         </div>
       </div>
@@ -856,6 +859,19 @@ const sections = [
   font-size: 1rem;
   font-weight: 700;
   color: #c4b5fd;
+}
+
+.opportunities h3 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #c4b5fd;
+}
+
+.opportunities.after-tiers {
+  margin-top: 8px;
+  padding-top: 26px;
+  border-top: 1px solid var(--border);
 }
 
 .logos {

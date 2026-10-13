@@ -158,7 +158,9 @@ const organizationData = {
     </section>
 
     {otherUpcoming.length > 0 && (
-      <section class="section event-section">
+      <section class="section event-section"
+               data-event-date={otherUpcoming.slice(0, 3).map((e) => e.date).sort().at(-1)}
+               data-hide-when-past>
         <div class="container">
           <div class="section-heading">
             <div>

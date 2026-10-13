@@ -22,7 +22,12 @@ const pastLabel = number ? `Meetup #${number}` : "Past event";
 const linkText = !past ? "View event" : talks.length > 0 ? "See what was covered" : "View meetup details";
 ---
 
-<a class:list={["event-card", "card", { featured: featured && !past }]} href={href}>
+<a
+  class:list={["event-card", "card", { featured: featured && !past }]}
+  href={href}
+  data-event-date={past ? undefined : date}
+  data-hide-when-past={!past}
+>
   <span class="eyebrow" data-event-date={date} data-past-label={pastLabel}>{label}</span>
   <h3>{title}</h3>
   <div class="meta">{dateDisplay}</div>
