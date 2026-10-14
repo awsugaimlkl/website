@@ -31,7 +31,7 @@ const organizationData = {
   description: SITE.description,
   foundingDate: "2025-11",
   areaServed: "Kuala Lumpur, Malaysia",
-  sameAs: [SITE.meetup, SITE.linkedin],
+  sameAs: [SITE.meetup, SITE.linkedin, SITE.instagram],
 };
 ---
 
@@ -214,6 +214,11 @@ const organizationData = {
           <a class="social card facebook-card" href={SITE.facebook} target="_blank" rel="noopener noreferrer">
             <span>Facebook</span>{" "}
             <strong>Join the discussion</strong>
+          </a>
+
+          <a class="social card instagram-card" href={SITE.instagram} target="_blank" rel="noopener noreferrer">
+            <span>Instagram</span>{" "}
+            <strong>See photos from our events</strong>
           </a>
         </div>
 
@@ -520,7 +525,7 @@ const organizationData = {
 
 .social-grid {
   display: grid;
-  grid-template-columns: repeat(3,1fr);
+  grid-template-columns: repeat(4,1fr);
   gap: 18px;
 }
 
@@ -541,6 +546,11 @@ const organizationData = {
 .meetup-card { border-bottom: 3px solid var(--orange); }
 .linkedin-card { border-bottom: 3px solid var(--purple); }
 .facebook-card { border-bottom: 3px solid var(--teal); }
+.instagram-card { border-bottom: 3px solid var(--rose); }
+
+@media (max-width:1000px) {
+  .social-grid { grid-template-columns: repeat(2,1fr); }
+}
 
 .ways {
   display: grid;
