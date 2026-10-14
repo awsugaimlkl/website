@@ -26,6 +26,9 @@ still looks best.
            clothes (the placeholder silhouette's shape, body-mask.png) instead of
            stretching their clothes. Best with dark, plain clothes; use it when
            stretching shows skin or a collar, as with a round avatar.
+  --model  the cut-out model (default isnet-general-use). Use u2net_human_seg when
+           clothing or a headscarf is close in colour to the background and the
+           default keeps only the face.
 
 Needs: pip install rembg onnxruntime pillow numpy "opencv-python-headless<5"
 (OpenCV 5 no longer has the face finder used here). The first run downloads
@@ -187,6 +190,7 @@ def main():
     ap.add_argument("--lower", type=float, default=0.0)
     ap.add_argument("--circle", action="store_true")
     ap.add_argument("--body", action="store_true")
+    ap.add_argument("--model", default="isnet-general-use")
     args = ap.parse_args()
 
     photo = ImageOps.exif_transpose(Image.open(args.photo)).convert("RGB")
@@ -203,7 +207,7 @@ def main():
 
     from rembg import new_session, remove
 
-    cut = remove(photo, session=new_session("isnet-general-use")).convert("RGBA")
+    cut = remove(photo, session=new_session(args.model)).convert("RGBA")
 
     if args.face:
         fx, fy, fh = (float(v) for v in args.face.split(","))
