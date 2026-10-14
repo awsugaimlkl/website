@@ -158,6 +158,8 @@ volunteers:
     photo: "jerry-chong"
   - name: "Lavanesswary"
     photo: "lavanesswary"
+  - name: "Edelyn Seah"
+    photo: "edelyn-seah"
 
 venueNote: "The building and room will be confirmed closer to the event."
 gettingThere:
