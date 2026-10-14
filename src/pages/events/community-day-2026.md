@@ -156,6 +156,8 @@ volunteers:
     photo: "chong-hun-yee"
   - name: "Jerry Chong"
     photo: "jerry-chong"
+  - name: "Lavanesswary"
+    photo: "lavanesswary"
 
 venueNote: "The building and room will be confirmed closer to the event."
 gettingThere:
