@@ -1,9 +1,9 @@
 """Make a Community Day volunteer tile from an ordinary photo.
 
-The person is cut out of the photo, turned black and white, and placed in front
-of the Kuala Lumpur skyline (background.jpg, the volunteer placeholder art with
-its silhouette taken out). The face is scaled and placed where the silhouette's
-face was, so every tile matches.
+The person is cut out of the photo, brightened a little, and placed in front of
+the Kuala Lumpur skyline (background.jpg, the volunteer placeholder art with its
+silhouette taken out). The face is scaled and placed where the silhouette's face
+was, so every tile matches.
 
     python3 make_tile.py PHOTO OUT.jpg [--crop X0,Y0,X1,Y1] [--face X,Y,H]
 
@@ -11,6 +11,15 @@ face was, so every tile matches.
            photo is wide or has other people in it.
   --face   the face centre and face height, in pixels of the original photo,
            when the face is not found automatically.
+
+A photo cut off at the chest would leave the person floating. The script then
+stretches the lowest part of their clothes down to the bottom of the tile. For
+such a photo, make the person larger and lower too (--zoom 1.5 --lower 0.05),
+so less has to be stretched. A photo showing the shoulders and some of the body
+still looks best.
+
+  --zoom   make the person larger than the standard size (1.0).
+  --lower  move the person down, as a fraction of the tile's height.
 
 Needs: pip install rembg onnxruntime pillow numpy "opencv-python-headless<5"
 (OpenCV 5 no longer has the face finder used here). The first run downloads
@@ -25,7 +34,7 @@ import os
 import sys
 
 import numpy as np
-from PIL import Image, ImageFilter, ImageOps
+from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -48,12 +57,59 @@ def find_face(rgb):
     return x + w / 2, y + h / 2, h
 
 
+def touches(edge):
+    return (edge > 128).mean() > 0.02
+
+
+def extend_body(cut, ox, oy, W, H, face_px, chin):
+    """Keep a person cut off at the chest from floating: stretch the lowest part of
+    their clothes (below the chin, folds and outline included) down to the bottom
+    of the tile. Sides cut by the photo's edge are softened instead."""
+    a = np.array(cut).astype(np.float32)
+    al = a[..., 3]
+    ch, cw = al.shape
+
+    if oy + ch < H and touches(al[-1, :]):
+        gap = H - (oy + ch) + 8
+        band = int(max(2, min(ch - max(chin, 0), max(0.15 * face_px, gap / 3))))
+        top = Image.fromarray(a[: ch - band].astype(np.uint8), "RGBA")
+        low = Image.fromarray(a[ch - band :].astype(np.uint8), "RGBA").resize((cw, band + gap), Image.BICUBIC)
+        out = Image.new("RGBA", (cw, ch + gap), (0, 0, 0, 0))
+        out.paste(top, (0, 0))
+        out.paste(low, (0, ch - band))
+        cut = out
+        a = np.array(cut).astype(np.float32)
+        al = a[..., 3]
+        ch, cw = al.shape
+
+    # A side cut by the photo's edge, or the top, fades out instead of ending in a hard line.
+    ramp = 0.25 * face_px
+    yy = np.arange(ch, dtype=np.float32)[:, None]
+    xx = np.arange(cw, dtype=np.float32)[None, :]
+
+    def smooth(t):
+        t = np.clip(t, 0, 1)
+        return t * t * (3 - 2 * t)
+
+    fade = np.ones_like(al)
+    if ox > 0 and touches(al[:, 0]):
+        fade = np.minimum(fade, smooth(xx / ramp))
+    if ox + cw < W and touches(al[:, -1]):
+        fade = np.minimum(fade, smooth((cw - 1 - xx) / ramp))
+    if oy > 0 and touches(al[0, :]):
+        fade = np.minimum(fade, smooth(yy / ramp))
+    cut.putalpha(Image.fromarray((al * fade).astype(np.uint8)))
+    return cut, ox, oy
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("photo")
     ap.add_argument("out")
     ap.add_argument("--crop")
     ap.add_argument("--face")
+    ap.add_argument("--zoom", type=float, default=1.0)
+    ap.add_argument("--lower", type=float, default=0.0)
     args = ap.parse_args()
 
     photo = ImageOps.exif_transpose(Image.open(args.photo)).convert("RGB")
@@ -78,42 +134,20 @@ def main():
 
     bg = Image.open(os.path.join(HERE, "background.jpg")).convert("RGB")
     W, H = bg.size
-    k = FACE_H * H / fh
+    k = args.zoom * FACE_H * H / fh
     cut = cut.resize((max(1, round(cut.width * k)), max(1, round(cut.height * k))), Image.LANCZOS)
-    ox, oy = round(FACE_X * W - fx * k), round(FACE_Y * H - fy * k)
+    ox, oy = round(FACE_X * W - fx * k), round((FACE_Y + args.lower) * H - fy * k)
 
-    # A photo cropped tight (at the chest or through the shoulders) would end in a
-    # hard straight line inside the tile. Fade the person out towards any photo
-    # edge they touch, when that edge falls inside the tile.
-    alpha = np.array(cut.split()[3]).astype(np.float32)
-    ch, cw = alpha.shape
-    ramp = 0.5 * FACE_H * H
-    yy = np.arange(ch, dtype=np.float32)[:, None]
-    xx = np.arange(cw, dtype=np.float32)[None, :]
-    fade = np.ones_like(alpha)
+    cut, ox, oy = extend_body(cut, ox, oy, W, H, fh * k, (fy + 0.6 * fh) * k)
 
-    def touches(edge):
-        return (edge > 128).mean() > 0.02
-
-    def smooth(t):
-        t = np.clip(t, 0, 1)
-        return t * t * (3 - 2 * t)
-
-    if oy + ch < H and touches(alpha[-1, :]):
-        fade = np.minimum(fade, smooth((ch - 1 - yy) / ramp))
-    if ox > 0 and touches(alpha[:, 0]):
-        fade = np.minimum(fade, smooth(xx / ramp))
-    if ox + cw < W and touches(alpha[:, -1]):
-        fade = np.minimum(fade, smooth((cw - 1 - xx) / ramp))
-    if oy > 0 and touches(alpha[0, :]):
-        fade = np.minimum(fade, smooth(yy / ramp))
-    cut.putalpha(Image.fromarray((alpha * fade).astype(np.uint8)))
-
-    # Black and white, with a touch of contrast. Only the person, not the skyline.
-    a = np.array(cut).astype(np.float32)
-    lum = (0.299 * a[..., 0] + 0.587 * a[..., 1] + 0.114 * a[..., 2]) / 255.0
-    lum = np.clip((lum - 0.5) * 1.08 + 0.52, 0, 1) * 255
-    person = Image.fromarray(np.dstack([lum, lum, lum, a[..., 3]]).astype(np.uint8), "RGBA")
+    # Natural colour, a little brighter and livelier so the person stands out on the dark blue.
+    alpha = cut.split()[3]
+    rgb = cut.convert("RGB")
+    rgb = ImageEnhance.Brightness(rgb).enhance(1.06)
+    rgb = ImageEnhance.Contrast(rgb).enhance(1.05)
+    rgb = ImageEnhance.Color(rgb).enhance(1.12)
+    person = rgb.convert("RGBA")
+    person.putalpha(alpha)
 
     layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     layer.alpha_composite(person, (max(ox, 0), max(oy, 0)), (max(-ox, 0), max(-oy, 0)))

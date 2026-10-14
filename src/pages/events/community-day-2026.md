@@ -135,7 +135,7 @@ volunteerSlots: 0
 
 # One entry per volunteer, shown in this order. linkedin is optional.
 # photo is a file name in src/assets/volunteers without the extension: a finished tile
-# made with tools/volunteer-tiles (the person in black and white on the skyline).
+# made with tools/volunteer-tiles (the person in colour on the skyline).
 # Without a photo, the tile shows the skyline silhouette above the name.
 # Example:
 #   - name: "Full name"
