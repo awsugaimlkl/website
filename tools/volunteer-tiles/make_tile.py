@@ -82,6 +82,33 @@ def main():
     cut = cut.resize((max(1, round(cut.width * k)), max(1, round(cut.height * k))), Image.LANCZOS)
     ox, oy = round(FACE_X * W - fx * k), round(FACE_Y * H - fy * k)
 
+    # A photo cropped tight (at the chest or through the shoulders) would end in a
+    # hard straight line inside the tile. Fade the person out towards any photo
+    # edge they touch, when that edge falls inside the tile.
+    alpha = np.array(cut.split()[3]).astype(np.float32)
+    ch, cw = alpha.shape
+    ramp = 0.5 * FACE_H * H
+    yy = np.arange(ch, dtype=np.float32)[:, None]
+    xx = np.arange(cw, dtype=np.float32)[None, :]
+    fade = np.ones_like(alpha)
+
+    def touches(edge):
+        return (edge > 128).mean() > 0.02
+
+    def smooth(t):
+        t = np.clip(t, 0, 1)
+        return t * t * (3 - 2 * t)
+
+    if oy + ch < H and touches(alpha[-1, :]):
+        fade = np.minimum(fade, smooth((ch - 1 - yy) / ramp))
+    if ox > 0 and touches(alpha[:, 0]):
+        fade = np.minimum(fade, smooth(xx / ramp))
+    if ox + cw < W and touches(alpha[:, -1]):
+        fade = np.minimum(fade, smooth((cw - 1 - xx) / ramp))
+    if oy > 0 and touches(alpha[0, :]):
+        fade = np.minimum(fade, smooth(yy / ramp))
+    cut.putalpha(Image.fromarray((alpha * fade).astype(np.uint8)))
+
     # Black and white, with a touch of contrast. Only the person, not the skyline.
     a = np.array(cut).astype(np.float32)
     lum = (0.299 * a[..., 0] + 0.587 * a[..., 1] + 0.114 * a[..., 2]) / 255.0

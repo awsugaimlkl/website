@@ -10,6 +10,6 @@ python3 tools/volunteer-tiles/make_tile.py photo.jpg src/assets/volunteers/jane-
 python3 tools/volunteer-tiles/make_tile.py wide-photo.jpg src/assets/volunteers/jane-tan.jpg --crop 1200,600,3000,2700
 ```
 
-Use `--crop` when the photo is wide or has other people in it, and `--face` when the face is not found by itself. Check each tile by eye before publishing.
+Use `--crop` when the photo is wide or has other people in it, and `--face` when the face is not found by itself. A photo cropped tight at the chest or shoulders is faded out towards those edges, so the person does not end in a hard line; a photo showing the shoulders and some of the body looks best. Check each tile by eye before publishing.
 
 These files are not part of the website build.
