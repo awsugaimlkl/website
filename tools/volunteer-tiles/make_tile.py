@@ -20,6 +20,12 @@ still looks best.
 
   --zoom   make the person larger than the standard size (1.0).
   --lower  move the person down, as a fraction of the tile's height.
+  --circle the photo is a round avatar: fill outside the circle with the photo's
+           background colour before cutting the person out.
+  --body   draw shoulders and a body behind the person in the colour of their
+           clothes (the placeholder silhouette's shape, body-mask.png) instead of
+           stretching their clothes. Best with dark, plain clothes; use it when
+           stretching shows skin or a collar, as with a round avatar.
 
 Needs: pip install rembg onnxruntime pillow numpy "opencv-python-headless<5"
 (OpenCV 5 no longer has the face finder used here). The first run downloads
@@ -102,6 +108,75 @@ def extend_body(cut, ox, oy, W, H, face_px, chin):
     return cut, ox, oy
 
 
+def fill_outside_circle(photo):
+    """A round avatar: replace whatever is outside the circle (often black) with
+    the photo's own background colour, so it is not taken for clothing."""
+    a = np.array(photo).astype(np.float32)
+    h, w, _ = a.shape
+    cx, cy, r = (w - 1) / 2, (h - 1) / 2, min(w, h) / 2
+    yy, xx = np.mgrid[0:h, 0:w]
+    dist = np.hypot(xx - cx, yy - cy)
+    ring = (dist < r - 4) & (dist > r - 14) & (yy < cy)      # just inside the circle, top half
+    bg = np.median(a[ring], axis=0)
+    a[dist > r - 2.5] = bg
+    return Image.fromarray(a.astype(np.uint8))
+
+
+def drawn_body(cut, oy, W, H, chin, face_px):
+    """Shoulders and body for a photo that shows too little of them (a round avatar,
+    a tight crop): the placeholder silhouette's shoulders, below the person's chin,
+    in the colour of their clothes with soft shading. It goes behind the person."""
+    import cv2
+
+    a = np.array(cut).astype(np.float32)
+    al = a[..., 3]
+    ch = al.shape[0]
+    low = slice(max(0, int(ch * 0.85)), ch)
+    sel = al[low] > 230
+    cloth = np.median(a[low][..., :3][sel], axis=0) if sel.any() else np.array([30, 30, 34], np.float32)
+
+    mask = np.array(Image.open(os.path.join(HERE, "body-mask.png")).convert("L").resize((W, H))).astype(np.float32)
+    # The silhouette's shoulders are broad: narrow them a little.
+    narrow = int(W * 0.9)
+    squeezed = np.array(Image.fromarray(mask.astype(np.uint8)).resize((narrow, H), Image.BILINEAR)).astype(np.float32)
+    mask = np.zeros((H, W), np.float32)
+    mask[:, (W - narrow) // 2:(W - narrow) // 2 + narrow] = squeezed
+    # The silhouette frays out before the bottom of the frame: below its widest row,
+    # carry that row straight down.
+    widest = int(np.argmax((mask > 127).sum(axis=1)))
+    mask[widest:] = mask[widest]
+    top = int(oy + chin)
+    mask[: max(0, top)] = 0
+    ramp = int(0.15 * face_px)                       # ease the body in below the chin
+    for i in range(ramp):
+        r = top + i
+        if 0 <= r < H:
+            mask[r] *= i / ramp
+    inside = (mask > 127).astype(np.uint8)
+    dist = cv2.distanceTransform(inside, cv2.DIST_L2, 5)
+    shade = 0.82 + 0.18 * np.clip(dist / (0.4 * face_px), 0, 1)
+    rgb = cloth[None, None, :] * shade[..., None]
+    alpha = cv2.GaussianBlur(mask, (0, 0), 2)
+    return Image.fromarray(np.dstack([np.clip(rgb, 0, 255), alpha]).astype(np.uint8), "RGBA")
+
+
+def fade_bottom_edge(cut, face_px):
+    """With a drawn body behind, let the lower edge of the photo (wherever it was cut)
+    melt into it instead of showing a line."""
+    a = np.array(cut).astype(np.float32)
+    al = a[..., 3]
+    h, w = al.shape
+    inside = al > 128
+    has = inside.any(axis=0)
+    bottom = np.where(has, h - 1 - np.argmax(inside[::-1], axis=0), 0).astype(np.float32)
+    ramp = 0.05 * face_px
+    yy = np.arange(h, dtype=np.float32)[:, None]
+    t = np.clip((bottom[None, :] - yy) / ramp, 0, 1)
+    al = al * (t * t * (3 - 2 * t))
+    cut.putalpha(Image.fromarray(al.astype(np.uint8)))
+    return cut
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("photo")
@@ -110,6 +185,8 @@ def main():
     ap.add_argument("--face")
     ap.add_argument("--zoom", type=float, default=1.0)
     ap.add_argument("--lower", type=float, default=0.0)
+    ap.add_argument("--circle", action="store_true")
+    ap.add_argument("--body", action="store_true")
     args = ap.parse_args()
 
     photo = ImageOps.exif_transpose(Image.open(args.photo)).convert("RGB")
@@ -117,6 +194,8 @@ def main():
     if args.crop:
         x0, y0, x1, y1 = (int(v) for v in args.crop.split(","))
         photo = photo.crop((x0, y0, x1, y1))
+    if args.circle:
+        photo = fill_outside_circle(photo)
     # Work at a sensible size: the cut-out model sees about 1000 pixels anyway.
     shrink = min(1.0, 1400 / max(photo.size))
     if shrink < 1:
@@ -138,7 +217,13 @@ def main():
     cut = cut.resize((max(1, round(cut.width * k)), max(1, round(cut.height * k))), Image.LANCZOS)
     ox, oy = round(FACE_X * W - fx * k), round((FACE_Y + args.lower) * H - fy * k)
 
-    cut, ox, oy = extend_body(cut, ox, oy, W, H, fh * k, (fy + 0.6 * fh) * k)
+    chin = (fy + 0.6 * fh) * k
+    body = None
+    if args.body:
+        body = drawn_body(cut, oy, W, H, chin, fh * k)
+        cut = fade_bottom_edge(cut, fh * k)
+    else:
+        cut, ox, oy = extend_body(cut, ox, oy, W, H, fh * k, chin)
 
     # Natural colour, a little brighter and livelier so the person stands out on the dark blue.
     alpha = cut.split()[3]
@@ -150,6 +235,8 @@ def main():
     person.putalpha(alpha)
 
     layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    if body is not None:
+        layer.alpha_composite(body)
     layer.alpha_composite(person, (max(ox, 0), max(oy, 0)), (max(-ox, 0), max(-oy, 0)))
 
     # A soft lavender glow around the person, like the silhouette's rim light.
