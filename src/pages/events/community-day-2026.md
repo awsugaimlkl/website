@@ -160,6 +160,8 @@ volunteers:
     photo: "lavanesswary"
   - name: "Edelyn Seah"
     photo: "edelyn-seah"
+  - name: "Muhammad Fikhri"
+    photo: "muhammad-fikhri"
 
 venueNote: "The building and room will be confirmed closer to the event."
 gettingThere:
