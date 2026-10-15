@@ -26,6 +26,11 @@ still looks best.
            clothes (the placeholder silhouette's shape, body-mask.png) instead of
            stretching their clothes. Best with dark, plain clothes; use it when
            stretching shows skin or a collar, as with a round avatar.
+  --cutout the photo is already a cut-out (a PNG with a transparent background),
+           for example one trimmed by hand to the head and neck; skip cutting out.
+  --jacket draw a formal black jacket with a white shirt and lapels behind the
+           person, fitted to where their neck ends. Use with --cutout and a cut-out
+           of the head and neck only.
   --model  the cut-out model (default isnet-general-use). Use u2net_human_seg when
            clothing or a headscarf is close in colour to the background and the
            default keeps only the face.
@@ -163,6 +168,89 @@ def drawn_body(cut, oy, W, H, chin, face_px):
     return Image.fromarray(np.dstack([np.clip(rgb, 0, 255), alpha]).astype(np.uint8), "RGBA")
 
 
+def soften_sides(cut, ox, oy, W, H, ramp):
+    """Fade the person out towards a side (or the top) of the photo that cuts through
+    them, when that side falls inside the tile."""
+    al = np.array(cut.split()[3]).astype(np.float32)
+    ch, cw = al.shape
+    yy = np.arange(ch, dtype=np.float32)[:, None]
+    xx = np.arange(cw, dtype=np.float32)[None, :]
+
+    def smooth(t):
+        t = np.clip(t, 0, 1)
+        return t * t * (3 - 2 * t)
+
+    fade = np.ones_like(al)
+    if ox > 0 and touches(al[:, 0]):
+        fade = np.minimum(fade, smooth(xx / ramp))
+    if ox + cw < W and touches(al[:, -1]):
+        fade = np.minimum(fade, smooth((cw - 1 - xx) / ramp))
+    if oy > 0 and touches(al[0, :]):
+        fade = np.minimum(fade, smooth(yy / ramp))
+    cut.putalpha(Image.fromarray((al * fade).astype(np.uint8)))
+    return cut
+
+
+def jacket_body(cut, ox, oy, W, H, face_px):
+    """A formal black jacket drawn to the person's own proportions, behind them:
+    the collar hugs the neck where the cut-out ends, the shoulders slope out, and a
+    white shirt shows in a narrow V between two dark lapels."""
+    import cv2
+
+    F = face_px
+    al = np.array(cut.split()[3]).astype(np.float32)
+    rows = np.where((al > 128).any(axis=1))[0]
+    nb = int(rows.max()) if len(rows) else al.shape[0] - 1        # neck base, cut-out rows
+    probe = al[max(0, int(nb - 0.12 * F))]
+    xs = np.where(probe > 128)[0]
+    if len(xs):
+        cx, nw = ox + (xs.min() + xs.max()) / 2, float(xs.max() - xs.min())
+    else:
+        cx, nw = ox + al.shape[1] / 2, 0.5 * F
+    y0 = oy + nb - 0.1 * F                                          # collar overlaps the neck
+
+    Y, X = np.mgrid[0:H, 0:W].astype(np.float32)
+    t = np.clip((Y - y0) / (0.95 * F), 0, 1)
+    half = 0.55 * nw + (1.45 * F - 0.55 * nw) * np.sin(t * np.pi / 2) ** 0.8 + 0.05 * np.clip(Y - y0 - 0.95 * F, 0, None)
+    d = np.abs(X - cx)
+    body = (Y >= y0) & (d <= half)
+
+    inside = body.astype(np.uint8)
+    dist = cv2.distanceTransform(inside, cv2.DIST_L2, 5)
+    shade = 0.8 + 0.2 * np.clip(dist / (0.35 * F), 0, 1)
+    rgb = np.zeros((H, W, 3), np.float32)
+    rgb[:] = np.array([24, 24, 28], np.float32)
+    rgb *= shade[..., None]
+
+    # White shirt in a narrow V, and a lapel either side of it.
+    yb = y0 + 0.9 * F
+    frac = np.clip((yb - Y) / (yb - y0), 0, 1)
+    vhalf = 0.55 * nw * frac
+    inv = (Y >= y0) & (Y <= yb)
+    shirt = inv & (d < vhalf)
+    lw = (0.05 + 0.2 * np.sin(np.pi * frac ** 0.8)) * F            # widest at mid-chest
+    lapel = inv & (d >= vhalf) & (d < vhalf + lw) & body
+    tone = 236 - 26 * np.clip(d / np.maximum(vhalf, 1), 0, 1)
+    under_chin = 0.72 + 0.28 * np.clip((Y - y0) / (0.3 * F), 0, 1)       # shadow below the chin
+    rgb[shirt] = (np.stack([tone, tone, tone + 3], -1) * under_chin[..., None])[shirt]
+    rgb[lapel] = (38, 38, 45)
+    rgb[inv & (np.abs(d - vhalf) < 0.01 * F)] = (70, 70, 82)
+    outer = inv & body & (np.abs(d - vhalf - lw) < 0.008 * F)
+    rgb[outer] = (52, 52, 60)
+    # The jacket's front edges meet below the V, with one button.
+    rgb[(Y > yb) & body & (np.abs(X - cx) < 0.006 * F)] = (46, 46, 54)
+    rgb[(X - cx) ** 2 + (Y - yb - 0.2 * F) ** 2 < (0.025 * F) ** 2] = (58, 58, 66)
+
+    # A little light from the upper left and a fine fabric grain, so it is not flat.
+    light = 1.0 + 0.1 * np.clip(1 - (X - (cx - 0.6 * F)) ** 2 / (1.2 * F) ** 2 - (Y - y0) / (2.5 * F), 0, 1)
+    grain = np.random.default_rng(7).normal(0, 2.2, (H, W)).astype(np.float32)
+    jacket = body & ~shirt
+    rgb[jacket] = rgb[jacket] * light[jacket][:, None] + grain[jacket][:, None]
+
+    alpha = cv2.GaussianBlur(body.astype(np.float32) * 255, (0, 0), 1.5)
+    return Image.fromarray(np.dstack([np.clip(rgb, 0, 255), alpha]).astype(np.uint8), "RGBA")
+
+
 def fade_bottom_edge(cut, face_px):
     """With a drawn body behind, let the lower edge of the photo (wherever it was cut)
     melt into it instead of showing a line."""
@@ -191,9 +279,11 @@ def main():
     ap.add_argument("--circle", action="store_true")
     ap.add_argument("--body", action="store_true")
     ap.add_argument("--model", default="isnet-general-use")
+    ap.add_argument("--cutout", action="store_true")
+    ap.add_argument("--jacket", action="store_true")
     args = ap.parse_args()
 
-    photo = ImageOps.exif_transpose(Image.open(args.photo)).convert("RGB")
+    photo = ImageOps.exif_transpose(Image.open(args.photo)).convert("RGBA" if args.cutout else "RGB")
     x0 = y0 = 0
     if args.crop:
         x0, y0, x1, y1 = (int(v) for v in args.crop.split(","))
@@ -205,9 +295,12 @@ def main():
     if shrink < 1:
         photo = photo.resize((round(photo.width * shrink), round(photo.height * shrink)), Image.LANCZOS)
 
-    from rembg import new_session, remove
+    if args.cutout:
+        cut = photo
+    else:
+        from rembg import new_session, remove
 
-    cut = remove(photo, session=new_session(args.model)).convert("RGBA")
+        cut = remove(photo, session=new_session(args.model)).convert("RGBA")
 
     if args.face:
         fx, fy, fh = (float(v) for v in args.face.split(","))
@@ -223,7 +316,11 @@ def main():
 
     chin = (fy + 0.6 * fh) * k
     body = None
-    if args.body:
+    if args.jacket:
+        body = jacket_body(cut, ox, oy, W, H, fh * k)
+        cut = soften_sides(cut, ox, oy, W, H, 0.1 * fh * k)
+        cut = fade_bottom_edge(cut, fh * k)
+    elif args.body:
         body = drawn_body(cut, oy, W, H, chin, fh * k)
         cut = fade_bottom_edge(cut, fh * k)
     else:
