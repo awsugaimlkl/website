@@ -20,9 +20,9 @@ photoCaption: "Our May 2026 meetup at Xendit Malaysia."
 # Banner across the top of the page. Put a # in front of these lines to take it down.
 # To have it come down by itself, add a last day to show it:   until: "2026-10-31"
 banner:
-  text: "Call for Talk Proposal Submission is now Open"
-  linkText: "Submit your proposal"
-  url: "https://forms.gle/DRJL2fS7ZxrTJWgN6"
+  text: "Event Registration is now Open"
+  linkText: "Register now"
+  url: "https://forms.gle/PqskpHoJMyNsWRjS6"
 
 # Call for speakers. While this line is here, the page shows "Apply to speak" buttons.
 # Put a # in front of it when the call closes.
@@ -37,8 +37,9 @@ topics:
   - "Machine learning"
   - "MLOps"
 
-# Add this line when registration opens and a Register button appears on the page:
-# registrationUrl: "https://..."
+# Registration form. While this line is here, Register buttons show at the top of the page
+# and in the Registration section. Put a # in front of it when registration closes.
+registrationUrl: "https://forms.gle/PqskpHoJMyNsWRjS6"
 
 # Short points shown under the About text.
 highlights:
