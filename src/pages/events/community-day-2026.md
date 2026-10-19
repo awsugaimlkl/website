@@ -96,6 +96,12 @@ speakers:
     talk: "Beyond Chatbots: Building Autonomous AI Agents with Amazon Bedrock AgentCore"
     linkedin: "https://www.linkedin.com/in/puteri-irene-alia-abdul-hadi-586a67a7/"
     photo: "puteri-irene-alia"
+  - name: "Fahim Surani"
+    role: "APJ Head of Solutions Architecture"
+    affiliation: "Arize AI"
+    talk: "Jev is all you need*"
+    linkedin: "https://www.linkedin.com/in/fahim-surani/"
+    photo: "fahim-surani"
 
 # Schedule. One entry per slot, in order. This is a placeholder outline: replace it with
 # the real slots when the agenda is set, and remove agendaNote at the same time.
