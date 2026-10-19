@@ -90,6 +90,12 @@ speakers:
     talk: "Can AI Stop Bad Code and Investigate Production Incidents? : From Code Review to Platform Intelligence with Kiro & AWS"
     linkedin: "https://www.linkedin.com/in/tsshahhassan"
     photo: "shah-hassan"
+  - name: "Puteri Irene Alia binti Abdul Hadi"
+    role: "AI Developer & AI Governance"
+    affiliation: "DRB-HICOM"
+    talk: "Beyond Chatbots: Building Autonomous AI Agents with Amazon Bedrock AgentCore"
+    linkedin: "https://www.linkedin.com/in/puteri-irene-alia-abdul-hadi-586a67a7/"
+    photo: "puteri-irene-alia"
 
 # Schedule. One entry per slot, in order. This is a placeholder outline: replace it with
 # the real slots when the agenda is set, and remove agendaNote at the same time.
