@@ -103,30 +103,47 @@ speakers:
     linkedin: "https://www.linkedin.com/in/fahim-surani/"
     photo: "fahim-surani"
 
-# Schedule. One entry per slot, in order. This is a placeholder outline: replace it with
-# the real slots when the agenda is set, and remove agendaNote at the same time.
+# Schedule. One entry per slot, in order, from the proposed agenda of 27 October 2026.
 # An entry with "placeholder: true" is marked "To be announced" on the page.
-# A confirmed talk looks like this:
-#   - time: "10:00 AM – 10:40 AM"
+# speaker is the line under the title. A talk looks like this:
+#   - time: "10:00 AM – 10:45 AM"
 #     title: "Talk title"
-#     speaker: "Speaker name"
-agendaNote: "This is an outline. Session times and talks will be confirmed once speakers are announced."
+#     speaker: "Speaker name, Company"
+agendaNote: "Session times and the keynote speaker are subject to confirmation."
 agenda:
-  - time: "9:00 AM"
-    title: "Registration"
-  - time: "Morning"
-    title: "Opening session"
-    placeholder: true
-  - time: "Morning"
-    title: "Talks"
-    placeholder: true
-  - time: "Midday"
+  - time: "9:00 AM – 9:30 AM"
+    title: "Registration and welcome"
+  - time: "9:30 AM – 10:00 AM"
+    title: "Opening remarks and keynote"
+    speaker: "Keynote speaker to be announced"
+  - time: "10:00 AM – 10:45 AM"
+    title: "AWS DevOps Agent, more than just another AI tool"
+    speaker: "Weiyuan Liu, Ascenda"
+  - time: "10:45 AM – 11:00 AM"
+    title: "Morning break"
+  - time: "11:00 AM – 11:45 AM"
+    title: "Can AI Stop Bad Code and Investigate Production Incidents? : From Code Review to Platform Intelligence with Kiro & AWS"
+    speaker: "Shah Hassan, NTT Data eCommerce Solutions Sdn Bhd"
+  - time: "11:45 AM – 12:30 PM"
+    title: "Beyond Chatbots: Building Autonomous AI Agents with Amazon Bedrock AgentCore"
+    speaker: "Puteri Irene Alia binti Abdul Hadi, DRB-HICOM"
+  - time: "12:30 PM – 1:30 PM"
     title: "Lunch break"
-  - time: "Afternoon"
-    title: "Talks"
-    placeholder: true
-  - time: "5:00 PM"
-    title: "Close"
+  - time: "1:30 PM – 2:15 PM"
+    title: "Your Model Worked Yesterday: Detecting ML Drift with Amazon SageMaker AI"
+    speaker: "Mirza Rayana Sanzana, Monash University"
+  - time: "2:15 PM – 3:00 PM"
+    title: "Jev is all you need*"
+    speaker: "Fahim Surani, Arize AI"
+  - time: "3:00 PM – 3:15 PM"
+    title: "Afternoon break"
+  - time: "3:15 PM – 4:00 PM"
+    title: "AI-Powered API Discovery, the Road to AGI, and Quantum Computing on AWS"
+    speaker: "Mohanahari Mohan, Maybank"
+  - time: "4:00 PM – 4:15 PM"
+    title: "Closing remarks and group photo"
+  - time: "4:15 PM – 5:00 PM"
+    title: "Community networking"
 
 # Sponsors and partners. Entries with the same tier are grouped under one heading.
 # logo is a file name in src/assets/sponsors without the extension; leave it out to show the name.
