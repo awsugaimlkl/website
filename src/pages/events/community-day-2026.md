@@ -65,7 +65,15 @@ speakerSlots: 6
 #     talk: "Talk title"
 #     linkedin: "https://www.linkedin.com/in/..."
 #     photo: "full-name"
+# Add keynote: true to show a "Keynote" label above the name. Keynote speakers go first.
+# A keynote with no talk title yet can leave talk out.
 speakers:
+  - name: "Ts. Tan Aik Keong"
+    role: "Founder and CEO"
+    affiliation: "Agmo Holdings Berhad"
+    linkedin: "https://www.linkedin.com/in/tan-aik-keong"
+    photo: "tan-aik-keong"
+    keynote: true
   - name: "Mohanahari Mohan"
     role: "Platform Engineer"
     affiliation: "Maybank"
@@ -109,13 +117,13 @@ speakers:
 #   - time: "10:00 AM – 10:45 AM"
 #     title: "Talk title"
 #     speaker: "Speaker name, Company"
-agendaNote: "Session times and the keynote speaker are subject to confirmation."
+agendaNote: "Session times are subject to confirmation."
 agenda:
   - time: "9:00 AM – 9:30 AM"
     title: "Registration and welcome"
   - time: "9:30 AM – 10:00 AM"
     title: "Opening remarks and keynote"
-    speaker: "Keynote speaker to be announced"
+    speaker: "Keynote by Ts. Tan Aik Keong, Agmo Holdings Berhad"
   - time: "10:00 AM – 10:45 AM"
     title: "AWS DevOps Agent, more than just another AI tool"
     speaker: "Weiyuan Liu, Ascenda"

@@ -2,7 +2,8 @@
 import { Image } from "astro:assets";
 
 // placeholder: an empty profile for a speaker who has not been announced yet.
-const { name = "", role, affiliation, talk, linkedin, photo, placeholder = false } = Astro.props;
+// keynote: true shows a "Keynote" label above the name.
+const { name = "", role, affiliation, talk, linkedin, photo, keynote = false, placeholder = false } = Astro.props;
 
 // Use the photo in src/assets/speakers if there is one, otherwise show initials.
 const files = import.meta.glob("/src/assets/speakers/*.{jpg,jpeg,png,webp}", { eager: true });
@@ -53,6 +54,7 @@ const widths = [...new Set([120, 240, maxWidth].filter((w) => w <= maxWidth))];
     <span class="portrait initials" aria-hidden="true">{initials}</span>
   )}
   <div>
+    {keynote && <p class="badge">Keynote</p>}
     <h3>{name}</h3>
     {role && <p class="role">{role}</p>}
     {affiliation && <p class="affiliation">{affiliation}</p>}
@@ -152,6 +154,23 @@ h3,
   .empty .role {
     font-size: .9rem;
   }
+}
+
+.badge {
+  display: inline-block;
+  margin: 2px 0 6px;
+  padding: 2px 9px;
+  border-radius: 4px;
+  background: var(--orange);
+  color: #111;
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+}
+
+.badge + h3 {
+  margin-top: 0;
 }
 
 .role {
