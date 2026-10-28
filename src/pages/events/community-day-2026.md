@@ -25,8 +25,8 @@ banner:
   url: "https://forms.gle/PqskpHoJMyNsWRjS6"
 
 # Call for speakers. While this line is here, the page shows "Apply to speak" buttons.
-# Put a # in front of it when the call closes.
-callForSpeakersUrl: "https://forms.gle/Uf1Hd2cmpmfuyzK88"
+# Put a # in front of it when the call closes. Closed 28 October 2026: all speakers confirmed.
+# callForSpeakersUrl: "https://forms.gle/Uf1Hd2cmpmfuyzK88"
 
 # Topics shown under the call for speakers.
 topics:
