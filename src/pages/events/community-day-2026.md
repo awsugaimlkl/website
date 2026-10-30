@@ -7,7 +7,7 @@ dateDisplay: "Saturday, 14 November 2026"
 time: "9:00 AM – 5:00 PM"
 startTime: "09:00"             # the countdown on the page runs to this time
 endTime: "17:00"
-venue: "Sunway University, Selangor"
+venue: "Lecture Theatre 5, Sunway University, Selangor"
 address: "No. 5, Jalan Universiti, Bandar Sunway, 47500 Selangor, Malaysia"
 mapUrl: "https://www.google.com/maps/search/?api=1&query=Sunway+University"
 calendarFile: "/community-day-2026.ics"
@@ -201,7 +201,6 @@ volunteers:
   - name: "Muhammad Fikhri"
     photo: "muhammad-fikhri"
 
-venueNote: "The building and room will be confirmed closer to the event."
 gettingThere:
   - how: "By BRT and LRT"
     text: "The closest station is SunU-Monash on the BRT Sunway Line. The BRT connects to the LRT Kelana Jaya Line at USJ 7."
