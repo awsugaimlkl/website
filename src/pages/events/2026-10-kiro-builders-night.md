@@ -22,7 +22,7 @@ It is for anyone building with AI: engineers, founders and tinkerers, whether yo
 
 - **7:00 PM** Registration, arrival and networking
 - **7:30 PM** Welcome and opening remarks
-- **7:45 PM** Talk by Poo Kuan Hoong, Ph.D.
+- **7:45 PM** "Agentic Coding with Kiro: From vibe to Spec to Autonomous Agents", by Poo Kuan Hoong, Ph.D. ([slides](https://1drv.ms/b/c/3c17719f924f89c9/IQAuMPMF6KIrTqcuq-3rlznJASlNX_Tz5H9LTBG9VUICYJs?e=rlimBO))
 - **8:10 PM** Break and networking
 - **8:25 PM** Technical deep dive on agent harnesses, by Derek Liew
 - **8:50 PM** Open Q&A and speaker discussion
