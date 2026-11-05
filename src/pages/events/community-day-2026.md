@@ -9,7 +9,7 @@ startTime: "09:00"             # the countdown on the page runs to this time
 endTime: "17:00"
 venue: "Hall 3, Graduate Centre, Sunway University, Selangor"
 address: "No. 5, Jalan Universiti, Bandar Sunway, 47500 Selangor, Malaysia"
-mapUrl: "https://www.google.com/maps/search/?api=1&query=Sunway+University"
+mapUrl: "https://www.google.com/maps/place/Sunway+University+Graduate+Center/@3.0681237,101.6021955,17z/data=!3m1!4b1!4m6!3m5!1s0x31cc4c85f0d5a367:0x643a9006896fd660!8m2!3d3.0681237!4d101.6047704!16s%2Fg%2F11gg9gjpqg"
 calendarFile: "/community-day-2026.ics"
 featured: true
 summary: "The first AWS Community Day AI/ML Edition organized by AWS User Group AI/ML Kuala Lumpur."
