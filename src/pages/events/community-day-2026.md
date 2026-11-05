@@ -39,7 +39,11 @@ topics:
 
 # Registration form. While this line is here, Register buttons show at the top of the page
 # and in the Registration section. Put a # in front of it when registration closes.
-registrationUrl: "https://forms.gle/PqskpHoJMyNsWRjS6"
+# registrationUrl: "https://forms.gle/PqskpHoJMyNsWRjS6"
+
+# When this is true, the Registration section says "Registration is closed."
+# Closed 5 November 2026.
+registrationClosed: true
 
 # Short points shown under the About text.
 highlights:

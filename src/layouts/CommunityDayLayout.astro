@@ -32,6 +32,7 @@ const {
   venueNote,
   gettingThere = [],
   registrationUrl,
+  registrationClosed = false,
   callForSpeakersUrl,
   banner,
   calendarFile,
@@ -177,7 +178,7 @@ const sections = [
               </a>
             )}
             {calendarFile && <a class="btn btn-secondary" href={calendarFile}>Add to calendar</a>}
-            {!registrationUrl && (
+            {!registrationUrl && !registrationClosed && (
               <a class="btn btn-secondary" href={SITE.meetup} target="_blank" rel="noopener noreferrer">
                 Get updates on Meetup
               </a>
@@ -309,6 +310,8 @@ const sections = [
         <div class="body">
           {past ? (
             <p class="note">This event has taken place.</p>
+          ) : registrationClosed ? (
+            <p class="fact">Registration is closed.</p>
           ) : registrationUrl ? (
             <Fragment>
               <p class="fact">Registration is open.</p>
