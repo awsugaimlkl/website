@@ -19,10 +19,10 @@ photoCaption: "Our May 2026 meetup at Xendit Malaysia."
 
 # Banner across the top of the page. Put a # in front of these lines to take it down.
 # To have it come down by itself, add a last day to show it:   until: "2026-10-31"
-banner:
-  text: "Event Registration is now Open"
-  linkText: "Register now"
-  url: "https://forms.gle/PqskpHoJMyNsWRjS6"
+# banner:
+#   text: "Event Registration is now Open"
+#   linkText: "Register now"
+#   url: "https://forms.gle/PqskpHoJMyNsWRjS6"
 
 # Call for speakers. While this line is here, the page shows "Apply to speak" buttons.
 # Put a # in front of it when the call closes. Closed 28 October 2026: all speakers confirmed.
