@@ -7,7 +7,7 @@ dateDisplay: "Saturday, 14 November 2026"
 time: "9:00 AM – 5:00 PM"
 startTime: "09:00"             # the countdown on the page runs to this time
 endTime: "17:00"
-venue: "Lecture Theatre 5, Sunway University, Selangor"
+venue: "Hall 3, Graduate Centre, Sunway University, Selangor"
 address: "No. 5, Jalan Universiti, Bandar Sunway, 47500 Selangor, Malaysia"
 mapUrl: "https://www.google.com/maps/search/?api=1&query=Sunway+University"
 calendarFile: "/community-day-2026.ics"
